@@ -84,6 +84,6 @@ public class ClientService {
     }
 
     public List<ClientSummaryDto> searchClientSummaryInfoList(SearchCondition searchCondition) {
-        return clientRepository.searchClientSummaryList(searchCondition, officeService.getCurrentUserEntity().getOffice().getOfficeId());
+        return clientRepository.searchClientSummaryList(searchCondition, officeService.getCurrentUserEntity().getOffice().getId());
     }
 }

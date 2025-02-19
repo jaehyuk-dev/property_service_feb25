@@ -34,7 +34,7 @@ public class ClientRepositoryImpl implements ClientRepositoryCustom {
                 ))
                 .from(client)
                 .where(
-                        client.pocOffice.officeId.eq(officeId),
+                        client.pocOffice.id.eq(officeId),
                         searchByType(condition.getSearchType(), condition.getKeyword())
                 )
                 .fetch();

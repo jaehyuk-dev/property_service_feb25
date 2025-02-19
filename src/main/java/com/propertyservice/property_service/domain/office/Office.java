@@ -16,7 +16,8 @@ import java.util.List;
 public class Office {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long officeId; // 중개사무소 ID
+    @Column(name = "office_id", updatable = false, nullable = false)
+    private Long id; // 중개사무소 ID
 
     @Column(unique = true, length = 255)
     private String officeCode; // 중개사무소 코드

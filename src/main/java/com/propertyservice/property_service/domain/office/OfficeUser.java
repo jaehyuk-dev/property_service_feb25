@@ -13,7 +13,8 @@ import lombok.*;
 public class OfficeUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId; // 사용자 ID
+    @Column(name = "office_user_id", updatable = false, nullable = false)
+    private Long id; // 사용자 ID
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "office_id", nullable = false)

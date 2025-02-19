@@ -16,7 +16,8 @@ import lombok.Setter;
 public class ClientExpectedTransactionType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long expectedTransactionId;
+    @Column(name = "client_expected_transaction_type_id", updatable = false, nullable = false)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
