@@ -24,6 +24,9 @@ public enum ErrorCode {
 
     IMAGE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "405", "이미지 저장 중 오류 발생"),
 
+    INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "400", "날짜 형식이 유효하지 않습니다."),
+
+
 
     // 공통 에러
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "40001", "잘못된 요청입니다."),

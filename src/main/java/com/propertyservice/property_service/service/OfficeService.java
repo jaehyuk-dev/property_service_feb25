@@ -205,6 +205,17 @@ public class OfficeService {
         officeUserRepository.save(user);
     }
 
+    public OfficeUser getCurrentUserEntity() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+//            return ((CustomUserDetails) authentication.getPrincipal()).getUserEntity();
+//        }
+//        throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        return officeUserRepository.findById(1L).orElseThrow(
+                () -> new BusinessException(ErrorCode.USER_NOT_FOUND)
+        );
+    }
+
 
 //    /**
 //     * 사용자 비밀번호 변경
