@@ -1,6 +1,6 @@
 package com.propertyservice.property_service.error;
 
-import com.propertyservice.property_service.error.exceptions.BusinessException;
+import com.propertyservice.property_service.error.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

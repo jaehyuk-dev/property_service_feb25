@@ -1,4 +1,4 @@
-package com.propertyservice.property_service.error.exceptions;
+package com.propertyservice.property_service.error.exception;
 
 import com.propertyservice.property_service.error.ErrorCode;
 import lombok.Getter;
