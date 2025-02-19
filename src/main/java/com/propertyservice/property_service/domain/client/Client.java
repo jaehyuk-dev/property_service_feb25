@@ -5,6 +5,7 @@ import com.propertyservice.property_service.domain.client.enums.ClientStatusConv
 import com.propertyservice.property_service.domain.common.BaseEntity;
 import com.propertyservice.property_service.domain.common.eums.Gender;
 import com.propertyservice.property_service.domain.common.eums.GenderConverter;
+import com.propertyservice.property_service.domain.office.Office;
 import com.propertyservice.property_service.domain.office.OfficeUser;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -24,6 +25,10 @@ public class Client extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "client_id", updatable = false, nullable = false)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poc_office_id", nullable = false)
+    private Office pocOffice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pic_user_id", nullable = false)
@@ -53,7 +58,8 @@ public class Client extends BaseEntity {
     private LocalDate moveInDate;
 
     @Builder
-    public Client(OfficeUser picUser, ClientStatus status, String name, String phoneNumber, Gender gender, String source, String type, LocalDate moveInDate) {
+    public Client(Office pocOffice, OfficeUser picUser, ClientStatus status, String name, String phoneNumber, Gender gender, String source, String type, LocalDate moveInDate) {
+        this.pocOffice = pocOffice;
         this.picUser = picUser;
         this.status = status;
         this.name = name;

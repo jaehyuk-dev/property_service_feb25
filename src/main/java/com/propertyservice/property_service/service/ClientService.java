@@ -7,6 +7,8 @@ import com.propertyservice.property_service.domain.client.enums.ClientStatus;
 import com.propertyservice.property_service.domain.common.eums.Gender;
 import com.propertyservice.property_service.domain.common.eums.TransactionType;
 import com.propertyservice.property_service.dto.client.ClientRegisterRequest;
+import com.propertyservice.property_service.dto.client.ClientSummaryDto;
+import com.propertyservice.property_service.dto.common.SearchCondition;
 import com.propertyservice.property_service.error.ErrorCode;
 import com.propertyservice.property_service.error.exception.BusinessException;
 import com.propertyservice.property_service.repository.client.ClientExpectedTransactionTypeRepository;
@@ -18,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -40,6 +44,7 @@ public class ClientService {
     private Client saveClientInfo(ClientRegisterRequest request) {
         return clientRepository.save(
                 Client.builder()
+                        .pocOffice(officeService.getCurrentUserEntity().getOffice())
                         .picUser(officeService.getCurrentUserEntity())
                         .status(ClientStatus.CONSULTING)
                         .name(request.getClientName())
@@ -76,5 +81,9 @@ public class ClientService {
 
     private String getValidValue(String value) {
         return (value == null || value.trim().isEmpty()) ? "기타" : value;
+    }
+
+    public List<ClientSummaryDto> searchClientSummaryInfoList(SearchCondition searchCondition) {
+        return clientRepository.searchClientSummaryList(searchCondition, officeService.getCurrentUserEntity().getOffice().getOfficeId());
     }
 }
