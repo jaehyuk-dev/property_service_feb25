@@ -15,7 +15,7 @@ public class AuditorAwareImpl implements AuditorAware<Long> {
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //
 //        // 인증되지 않은 경우
-//        if (authentication == null || !authentication.isAuthenticated()) {
+//        if (authentication == null || !authentication.isAuthenticatesd()) {
 //            return Optional.empty();
 //        }
 //
@@ -28,6 +28,6 @@ public class AuditorAwareImpl implements AuditorAware<Long> {
 //
 //        // principal이 예상 타입이 아닌 경우
 //        return Optional.empty();
-        return Optional.of(-1L);
+        return Optional.of(1L);
     }
 }
