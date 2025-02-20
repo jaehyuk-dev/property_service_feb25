@@ -6,6 +6,7 @@ import com.propertyservice.property_service.domain.property.BuildingRemark;
 import com.propertyservice.property_service.domain.property.enums.BuildingType;
 import com.propertyservice.property_service.dto.file.FileUploadDto;
 import com.propertyservice.property_service.dto.property.BuildingRegisterRequest;
+import com.propertyservice.property_service.dto.property.BuildingSummaryDto;
 import com.propertyservice.property_service.repository.property.BuildingPhotoRepository;
 import com.propertyservice.property_service.repository.property.BuildingRemarkRepository;
 import com.propertyservice.property_service.repository.property.BuildingRepository;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -61,5 +64,9 @@ public class PropertyService {
                             .build()
             );
         }
+    }
+
+    public List<BuildingSummaryDto> searchBuildingSummaryList(String searchWord){
+        return buildingRepository.searchBuildingSummaryList(searchWord, officeService.getCurrentUserEntity().getOffice().getId());
     }
 }
