@@ -1,0 +1,32 @@
+package com.propertyservice.property_service.domain.property;
+
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "property_remark")
+public class PropertyRemark {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "property_remark_id", updatable = false, nullable = false)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "property_id", nullable = false)
+    private Property property;
+
+    @Column(name = "property_remark", nullable = false, length = 255)
+    private String remark;
+
+    @Builder
+    public PropertyRemark(Property property, String remark) {
+        this.property = property;
+        this.remark = remark;
+    }
+}
