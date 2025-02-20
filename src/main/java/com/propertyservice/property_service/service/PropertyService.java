@@ -190,12 +190,12 @@ public class PropertyService {
 
         buildingPhotoRepository.deleteAllByBuilding(building);
 
-        for(int i = 0; i < request.getPhotoList().size(); i++){
+        for(int i = 0; i < request.getPhotoUrlList().size(); i++){
             buildingPhotoRepository.save(
                     BuildingPhoto.builder()
                             .building(building)
                             .isMain(i == request.getBuildingMainPhotoIndex())
-                            .photoUrl(request.getPhotoList().get(i))
+                            .photoUrl(request.getPhotoUrlList().get(i))
                             .build()
             );
         }
