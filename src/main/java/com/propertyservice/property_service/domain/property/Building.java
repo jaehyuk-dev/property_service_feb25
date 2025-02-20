@@ -80,4 +80,19 @@ public class Building extends BaseEntity {
         this.commonPassword = commonPassword;
         this.hasIllegal = hasIllegal;
     }
+
+    public void updateBuilding(String name, String zoneCode, String address, String jibunAddress, int completionYear, BuildingType buildingType, String floorCount, int parkingAreaCount, int elevatorCount, String mainDoorDirection, String commonPassword, Boolean hasIllegal) {
+        this.name = name;
+        this.zoneCode = zoneCode;
+        this.address = address;
+        this.jibunAddress = jibunAddress;
+        this.completionYear = completionYear;
+        this.buildingType = buildingType;
+        this.floorCount = floorCount;
+        this.parkingAreaCount = parkingAreaCount;
+        this.elevatorCount = elevatorCount;
+        this.mainDoorDirection = mainDoorDirection;
+        this.commonPassword = commonPassword;
+        this.hasIllegal = hasIllegal;
+    }
 }

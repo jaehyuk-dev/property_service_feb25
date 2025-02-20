@@ -10,6 +10,7 @@ import com.propertyservice.property_service.dto.file.FileUploadDto;
 import com.propertyservice.property_service.dto.property.BuildingDetailResponse;
 import com.propertyservice.property_service.dto.property.BuildingRegisterRequest;
 import com.propertyservice.property_service.dto.property.BuildingSummaryDto;
+import com.propertyservice.property_service.dto.property.BuildingUpdateRequest;
 import com.propertyservice.property_service.error.ErrorCode;
 import com.propertyservice.property_service.error.exception.BusinessException;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
@@ -85,7 +86,7 @@ public class PropertyService {
         );
 
         List<RemarkDto> buildingRemarkList = searchBuildingRemarkList(buildingId);
-        List<ImageDto> buildingImageList = searchBuldingImageList(buildingId);
+        List<ImageDto> buildingImageList = searchBuildingImageList(buildingId);
 
         return BuildingDetailResponse.builder()
                 .buildingId(building.getId())
@@ -106,7 +107,7 @@ public class PropertyService {
                 .build();
     }
 
-    public List<ImageDto> searchBuldingImageList(Long buildingId) {
+    public List<ImageDto> searchBuildingImageList(Long buildingId) {
         Building building = buildingRepository.findById(buildingId).orElseThrow(
                 () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
         );
@@ -141,5 +142,27 @@ public class PropertyService {
             );
         }
         return buildingRemarkList;
+    }
+
+    @Transactional
+    public void updateBuilding(BuildingUpdateRequest request){
+        Building building = buildingRepository.findById(request.getBuildingId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
+        );
+
+        building.updateBuilding(
+                request.getBuildingName(),
+                request.getBuildingZoneCode(),
+                request.getBuildingAddress(),
+                request.getBuildingJibunAddress(),
+                request.getBuildingCompletedYear(),
+                BuildingType.fromValue(request.getBuildingTypeCode()),
+                request.getBuildingFloorCount(),
+                request.getBuildingParkingAreaCount(),
+                request.getBuildingElevatorCount(),
+                request.getBuildingMainDoorDirection(),
+                request.getBuildingCommonPassword(),
+                request.isBuildingHasIllegal()
+        );
     }
 }
