@@ -3,6 +3,7 @@ package com.propertyservice.property_service.controller;
 import com.propertyservice.property_service.dto.client.ClientRegisterRequest;
 import com.propertyservice.property_service.dto.common.ApiResponseDto;
 import com.propertyservice.property_service.dto.common.SuccessResponseDto;
+import com.propertyservice.property_service.dto.property.BuildingDetailResponse;
 import com.propertyservice.property_service.dto.property.BuildingRegisterRequest;
 import com.propertyservice.property_service.dto.property.BuildingSummaryDto;
 import com.propertyservice.property_service.service.PropertyService;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -54,5 +56,19 @@ public class PropertyController {
     @GetMapping("/building/list")
     public ResponseEntity<ApiResponseDto<List<BuildingSummaryDto>>> searchBuildingSummaryList(@RequestParam(value = "searchWord", defaultValue = "") String searchWord) {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchBuildingSummaryList(searchWord)));
+    }
+
+    @Operation(summary = "건물 상세 조회", description = "건물 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/building/{buildingId}")
+    public ResponseEntity<ApiResponseDto<BuildingDetailResponse>> searchBuildingDetail(@PathVariable(value = "buildingId") Long buildingId) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchBuildingDetail(buildingId)));
     }
 }

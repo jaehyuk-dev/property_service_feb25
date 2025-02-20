@@ -4,9 +4,15 @@ import com.propertyservice.property_service.domain.property.Building;
 import com.propertyservice.property_service.domain.property.BuildingPhoto;
 import com.propertyservice.property_service.domain.property.BuildingRemark;
 import com.propertyservice.property_service.domain.property.enums.BuildingType;
+import com.propertyservice.property_service.dto.common.ImageDto;
+import com.propertyservice.property_service.dto.common.RemarkDto;
 import com.propertyservice.property_service.dto.file.FileUploadDto;
+import com.propertyservice.property_service.dto.property.BuildingDetailResponse;
 import com.propertyservice.property_service.dto.property.BuildingRegisterRequest;
 import com.propertyservice.property_service.dto.property.BuildingSummaryDto;
+import com.propertyservice.property_service.error.ErrorCode;
+import com.propertyservice.property_service.error.exception.BusinessException;
+import com.propertyservice.property_service.repository.office.OfficeUserRepository;
 import com.propertyservice.property_service.repository.property.BuildingPhotoRepository;
 import com.propertyservice.property_service.repository.property.BuildingRemarkRepository;
 import com.propertyservice.property_service.repository.property.BuildingRepository;
@@ -15,7 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -27,6 +35,7 @@ public class PropertyService {
     private final BuildingRemarkRepository buildingRemarkRepository;
     private final BuildingPhotoRepository buildingPhotoRepository;
     private final OfficeService officeService;
+    private final OfficeUserRepository officeUserRepository;
 
     @Transactional
     public void registerBuilding(BuildingRegisterRequest request) {
@@ -68,5 +77,69 @@ public class PropertyService {
 
     public List<BuildingSummaryDto> searchBuildingSummaryList(String searchWord){
         return buildingRepository.searchBuildingSummaryList(searchWord, officeService.getCurrentUserEntity().getOffice().getId());
+    }
+
+    public BuildingDetailResponse searchBuildingDetail(Long buildingId){
+        Building building = buildingRepository.findById(buildingId).orElseThrow(
+                () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
+        );
+
+        List<RemarkDto> buildingRemarkList = getRemarkDtoList(buildingId);
+        List<ImageDto> buildingImageList = getImageDtoList(buildingId);
+
+        return BuildingDetailResponse.builder()
+                .buildingId(building.getId())
+                .buildingName(building.getName())
+                .buildingZoneCode(building.getZoneCode())
+                .buildingAddress(building.getAddress())
+                .buildingJibunAddress(building.getJibunAddress())
+                .buildingCompletedYear(building.getCompletionYear())
+                .buildingTypeName(building.getBuildingType().getLabel())
+                .buildingFloorCount(building.getFloorCount())
+                .buildingParkingAreaCount(building.getParkingAreaCount())
+                .buildingElevatorCount(building.getElevatorCount())
+                .buildingMainDoorDirection(building.getMainDoorDirection())
+                .buildingCommonPassword(building.getCommonPassword())
+                .buildingHasIllegal(building.getHasIllegal())
+                .buildingRemarkList(buildingRemarkList)
+                .buildingImageList(buildingImageList)
+                .build();
+    }
+
+    public List<ImageDto> getImageDtoList(Long buildingId) {
+        Building building = buildingRepository.findById(buildingId).orElseThrow(
+                () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
+        );
+
+        List<ImageDto> buildingImageList = new ArrayList<>();
+        for (BuildingPhoto buildingPhoto : buildingPhotoRepository.findAllByBuilding(building)) {
+            buildingImageList.add(
+                    ImageDto.builder()
+                            .imageId(buildingPhoto.getId())
+                            .isMain(buildingPhoto.getIsMain())
+                            .imageUrl(buildingPhoto.getPhotoUrl())
+                            .build()
+            );
+        }
+        return buildingImageList;
+    }
+
+    public List<RemarkDto> getRemarkDtoList(Long buildingId) {
+        Building building = buildingRepository.findById(buildingId).orElseThrow(
+                () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
+        );
+
+        List<RemarkDto> buildingRemarkList = new ArrayList<>();
+        for (BuildingRemark buildingRemark : buildingRemarkRepository.findAllByBuilding(building)) {
+            buildingRemarkList.add(
+                    RemarkDto.builder()
+                            .remarkId(buildingRemark.getId())
+                            .remark(buildingRemark.getRemark())
+                            .createdAt(buildingRemark.getCreatedDate().toLocalDate())
+                            .createdBy(Objects.requireNonNull(officeUserRepository.findById(buildingRemark.getCreatedByUserId()).orElse(null)).getName())
+                            .build()
+            );
+        }
+        return buildingRemarkList;
     }
 }
