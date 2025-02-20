@@ -84,8 +84,8 @@ public class PropertyService {
                 () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
         );
 
-        List<RemarkDto> buildingRemarkList = getRemarkDtoList(buildingId);
-        List<ImageDto> buildingImageList = getImageDtoList(buildingId);
+        List<RemarkDto> buildingRemarkList = searchBuildingRemarkList(buildingId);
+        List<ImageDto> buildingImageList = searchBuldingImageList(buildingId);
 
         return BuildingDetailResponse.builder()
                 .buildingId(building.getId())
@@ -106,7 +106,7 @@ public class PropertyService {
                 .build();
     }
 
-    public List<ImageDto> getImageDtoList(Long buildingId) {
+    public List<ImageDto> searchBuldingImageList(Long buildingId) {
         Building building = buildingRepository.findById(buildingId).orElseThrow(
                 () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
         );
@@ -124,7 +124,7 @@ public class PropertyService {
         return buildingImageList;
     }
 
-    public List<RemarkDto> getRemarkDtoList(Long buildingId) {
+    public List<RemarkDto> searchBuildingRemarkList(Long buildingId) {
         Building building = buildingRepository.findById(buildingId).orElseThrow(
                 () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
         );

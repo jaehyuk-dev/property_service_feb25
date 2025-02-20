@@ -2,6 +2,8 @@ package com.propertyservice.property_service.controller;
 
 import com.propertyservice.property_service.dto.client.ClientRegisterRequest;
 import com.propertyservice.property_service.dto.common.ApiResponseDto;
+import com.propertyservice.property_service.dto.common.ImageDto;
+import com.propertyservice.property_service.dto.common.RemarkDto;
 import com.propertyservice.property_service.dto.common.SuccessResponseDto;
 import com.propertyservice.property_service.dto.property.BuildingDetailResponse;
 import com.propertyservice.property_service.dto.property.BuildingRegisterRequest;
@@ -71,4 +73,35 @@ public class PropertyController {
     public ResponseEntity<ApiResponseDto<BuildingDetailResponse>> searchBuildingDetail(@PathVariable(value = "buildingId") Long buildingId) {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchBuildingDetail(buildingId)));
     }
+
+    @Operation(summary = "건물 상세 특이사항 조회", description = "건물 상세 특이사항을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/building/{buildingId}/remark-list")
+    public ResponseEntity<ApiResponseDto<List<RemarkDto>>> searchBuildingRemarkList(@PathVariable(value = "buildingId") Long buildingId) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchBuildingRemarkList(buildingId)));
+    }
+
+
+    @Operation(summary = "건물 상세 이미지 조회", description = "건물 상세 이미지를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/building/{buildingId}/image-list")
+    public ResponseEntity<ApiResponseDto<List<ImageDto>>> searchBuldingImageList(@PathVariable(value = "buildingId") Long buildingId) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchBuldingImageList(buildingId)));
+    }
+
+
 }
