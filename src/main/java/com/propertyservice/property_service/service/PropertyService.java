@@ -7,10 +7,7 @@ import com.propertyservice.property_service.domain.property.enums.BuildingType;
 import com.propertyservice.property_service.dto.common.ImageDto;
 import com.propertyservice.property_service.dto.common.RemarkDto;
 import com.propertyservice.property_service.dto.file.FileUploadDto;
-import com.propertyservice.property_service.dto.property.BuildingDetailResponse;
-import com.propertyservice.property_service.dto.property.BuildingRegisterRequest;
-import com.propertyservice.property_service.dto.property.BuildingSummaryDto;
-import com.propertyservice.property_service.dto.property.BuildingUpdateRequest;
+import com.propertyservice.property_service.dto.property.*;
 import com.propertyservice.property_service.error.ErrorCode;
 import com.propertyservice.property_service.error.exception.BusinessException;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
@@ -164,5 +161,24 @@ public class PropertyService {
                 request.getBuildingCommonPassword(),
                 request.isBuildingHasIllegal()
         );
+    }
+
+    @Transactional
+    public void registerBuildingRemark(BuildingRemarkRequest buildingRemarkRequest){
+        Building building = buildingRepository.findById(buildingRemarkRequest.getBuildingId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
+        );
+
+        buildingRemarkRepository.save(
+                BuildingRemark.builder()
+                        .building(building)
+                        .remark(buildingRemarkRequest.getBuildingRemark())
+                        .build()
+        );
+    }
+
+    @Transactional
+    public void deleteBuildingRemark(Long buildingRemarkId){
+        buildingRemarkRepository.deleteById(buildingRemarkId);
     }
 }
