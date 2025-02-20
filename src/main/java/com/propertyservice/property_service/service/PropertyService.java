@@ -181,4 +181,23 @@ public class PropertyService {
     public void deleteBuildingRemark(Long buildingRemarkId){
         buildingRemarkRepository.deleteById(buildingRemarkId);
     }
+
+    @Transactional
+    public void updateBuildingPhotoList(BuildingImageRequest request){
+        Building building = buildingRepository.findById(request.getBuildingId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
+        );
+
+        buildingPhotoRepository.deleteAllByBuilding(building);
+
+        for(int i = 0; i < request.getPhotoList().size(); i++){
+            buildingPhotoRepository.save(
+                    BuildingPhoto.builder()
+                            .building(building)
+                            .isMain(i == request.getBuildingMainPhotoIndex())
+                            .photoUrl(request.getPhotoList().get(i))
+                            .build()
+            );
+        }
+    }
 }

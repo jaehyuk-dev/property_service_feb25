@@ -110,7 +110,7 @@ public class PropertyController {
                     content = @Content(mediaType = "application/json")),
     })
     @PutMapping("/building")
-    public ResponseEntity<ApiResponseDto<String>> searchBuildingImageList(@Validated @RequestBody BuildingUpdateRequest request) {
+    public ResponseEntity<ApiResponseDto<String>> updateBuilding(@Validated @RequestBody BuildingUpdateRequest request) {
         propertyService.updateBuilding(request);
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
@@ -125,7 +125,7 @@ public class PropertyController {
                     content = @Content(mediaType = "application/json")),
     })
     @PostMapping("/building/remark")
-    public ResponseEntity<ApiResponseDto<String>> registerBuilding(@Validated @RequestBody BuildingRemarkRequest request) {
+    public ResponseEntity<ApiResponseDto<String>> registerBuildingRemark(@Validated @RequestBody BuildingRemarkRequest request) {
         propertyService.registerBuildingRemark(request);
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
@@ -140,9 +140,23 @@ public class PropertyController {
                     content = @Content(mediaType = "application/json")),
     })
     @DeleteMapping("/building/remark/{remarkId}")
-    public ResponseEntity<ApiResponseDto<String>> registerBuilding(@PathVariable(value = "remarkId") Long remarkId) {
+    public ResponseEntity<ApiResponseDto<String>> deleteBuildingRemark(@PathVariable(value = "remarkId") Long remarkId) {
         propertyService.deleteBuildingRemark(remarkId);
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
+    @Operation(summary = "건물 이미지 목록 수정", description = "건물 이미지 목록을 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PutMapping("/building/photo-list")
+    public ResponseEntity<ApiResponseDto<String>> updateBuildingImage(@Validated @RequestBody BuildingImageRequest request) {
+        propertyService.updateBuildingPhotoList(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
 }
