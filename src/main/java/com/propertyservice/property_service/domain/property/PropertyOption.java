@@ -1,7 +1,5 @@
 package com.propertyservice.property_service.domain.property;
 
-import com.propertyservice.property_service.domain.property.enums.MaintenanceItemType;
-import com.propertyservice.property_service.domain.property.enums.MaintenanceItemTypeConverter;
 import com.propertyservice.property_service.domain.property.enums.OptionItemType;
 import com.propertyservice.property_service.domain.property.enums.OptionItemTypeConverter;
 import jakarta.persistence.*;

@@ -6,6 +6,7 @@ import com.propertyservice.property_service.domain.property.enums.BuildingTypeCo
 import com.propertyservice.property_service.domain.property.enums.PropertyStatus;
 import com.propertyservice.property_service.domain.property.enums.PropertyStatusConverter;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -77,4 +78,25 @@ public class Property {
 
     @Column(name = "available_move_in_date", nullable = false)
     private LocalDate availableMoveInDate;
+
+    @Builder
+    public Property(OfficeUser picUser, Building building, PropertyStatus propertyStatus, String ownerName, String ownerPhoneNumber, String ownerRelation, String roomNumber, String propertyType, String propertyFloor, String roomBathCount, String mainRoomDirection, Double exclusiveArea, Double supplyArea, LocalDate approvalDate, LocalDate moveInDate, LocalDate moveOutDate, LocalDate availableMoveInDate) {
+        this.picUser = picUser;
+        this.building = building;
+        this.propertyStatus = propertyStatus;
+        this.ownerName = ownerName;
+        this.ownerPhoneNumber = ownerPhoneNumber;
+        this.ownerRelation = ownerRelation;
+        this.roomNumber = roomNumber;
+        this.propertyType = propertyType;
+        this.propertyFloor = propertyFloor;
+        this.roomBathCount = roomBathCount;
+        this.mainRoomDirection = mainRoomDirection;
+        this.exclusiveArea = exclusiveArea;
+        this.supplyArea = supplyArea;
+        this.approvalDate = approvalDate;
+        this.moveInDate = moveInDate;
+        this.moveOutDate = moveOutDate;
+        this.availableMoveInDate = availableMoveInDate;
+    }
 }
