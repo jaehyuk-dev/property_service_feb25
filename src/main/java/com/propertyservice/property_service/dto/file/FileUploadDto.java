@@ -1,4 +1,4 @@
-package com.propertyservice.property_service.dto.common;
+package com.propertyservice.property_service.dto.file;
 
 import lombok.Getter;
 import lombok.Setter;

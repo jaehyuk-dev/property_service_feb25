@@ -26,6 +26,10 @@ public enum ErrorCode {
 
     INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "400", "날짜 형식이 유효하지 않습니다."),
 
+    INVALID_NO_IMAGE_NAME(HttpStatus.BAD_REQUEST, "400", "파일 이름이 없습니다."),
+    INVALID_IMAGE_FILE(HttpStatus.BAD_REQUEST, "400", "허용되지 않은 이미지 파일 형식입니다"),
+
+
 
 
     // 공통 에러

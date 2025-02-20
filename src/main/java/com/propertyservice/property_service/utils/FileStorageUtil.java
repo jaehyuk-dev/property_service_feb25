@@ -10,10 +10,19 @@ import java.util.UUID;
 @UtilityClass
 public class FileStorageUtil {
 
-    private static final String UPLOAD_BUILDING_DIR = "uploads/building/";
+    private static final String UPLOAD_BUILDING_DIR = "src/main/resources/static/building/";
+    private static final String UPLOAD_PROPERTY_DIR = "src/main/resources/static/property/";
 
     public static String saveBuildingImageFile(MultipartFile file) throws IOException {
-        Path uploadPath = Paths.get(UPLOAD_BUILDING_DIR);
+        return getString(file, UPLOAD_BUILDING_DIR);
+    }
+
+    public static String savePropertyImageFile(MultipartFile file) throws IOException {
+        return getString(file, UPLOAD_PROPERTY_DIR);
+    }
+
+    private static String getString(MultipartFile file, String uploadPropertyDir) throws IOException {
+        Path uploadPath = Paths.get(uploadPropertyDir);
 
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
