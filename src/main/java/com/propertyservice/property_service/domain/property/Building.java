@@ -1,5 +1,8 @@
 package com.propertyservice.property_service.domain.property;
 
+import com.propertyservice.property_service.domain.common.BaseEntity;
+import com.propertyservice.property_service.domain.office.Office;
+import com.propertyservice.property_service.domain.office.OfficeUser;
 import com.propertyservice.property_service.domain.property.enums.BuildingType;
 import com.propertyservice.property_service.domain.property.enums.BuildingTypeConverter;
 import jakarta.persistence.*;
@@ -13,12 +16,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(name = "building")
-public class Building {
+public class Building extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "building_id", updatable = false, nullable = false)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poc_office_id", nullable = false)
+    private Office pocOffice;
 
     @Column(name = "building_name", length = 255)
     private String name;
@@ -33,7 +40,7 @@ public class Building {
     private String jibunAddress;
 
     @Column(name = "completion_year", nullable = false)
-    private Short completionYear;
+    private int completionYear;
 
     @Convert(converter = BuildingTypeConverter.class)
     @Column(name = "building_type", nullable = false)
@@ -43,10 +50,10 @@ public class Building {
     private String floorCount;
 
     @Column(name = "parking_area_count", nullable = false)
-    private Short parkingAreaCount;
+    private int parkingAreaCount;
 
     @Column(name = "elevator_count", nullable = false)
-    private Short elevatorCount;
+    private int elevatorCount;
 
     @Column(name = "main_door_direction", length = 255)
     private String mainDoorDirection;
@@ -58,7 +65,8 @@ public class Building {
     private Boolean hasIllegal = false;
 
     @Builder
-    public Building(String name, String zoneCode, String address, String jibunAddress, Short completionYear, BuildingType buildingType, String floorCount, Short parkingAreaCount, Short elevatorCount, String mainDoorDirection, String commonPassword, Boolean hasIllegal) {
+    public Building(Office pocOffice, String name, String zoneCode, String address, String jibunAddress, int completionYear, BuildingType buildingType, String floorCount, int parkingAreaCount, int elevatorCount, String mainDoorDirection, String commonPassword, Boolean hasIllegal) {
+        this.pocOffice = pocOffice;
         this.name = name;
         this.zoneCode = zoneCode;
         this.address = address;

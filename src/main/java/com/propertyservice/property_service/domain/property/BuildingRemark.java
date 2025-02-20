@@ -2,6 +2,7 @@ package com.propertyservice.property_service.domain.property;
 
 import com.propertyservice.property_service.domain.common.BaseEntity;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,4 +25,10 @@ public class BuildingRemark extends BaseEntity {
 
     @Column(name = "building_remark", nullable = false, length = 255)
     private String remark;
+
+    @Builder
+    public BuildingRemark(Building building, String remark) {
+        this.building = building;
+        this.remark = remark;
+    }
 }
