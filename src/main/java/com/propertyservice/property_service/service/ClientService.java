@@ -7,6 +7,7 @@ import com.propertyservice.property_service.domain.client.ShowingProperty;
 import com.propertyservice.property_service.domain.client.enums.ClientStatus;
 import com.propertyservice.property_service.domain.common.eums.Gender;
 import com.propertyservice.property_service.domain.common.eums.TransactionType;
+import com.propertyservice.property_service.domain.property.Property;
 import com.propertyservice.property_service.domain.schedule.Schedule;
 import com.propertyservice.property_service.dto.client.*;
 import com.propertyservice.property_service.dto.common.RemarkDto;
@@ -20,6 +21,7 @@ import com.propertyservice.property_service.repository.client.ClientRepository;
 import com.propertyservice.property_service.repository.client.ShowingPropertyRepository;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
 import com.propertyservice.property_service.repository.property.PropertyRepository;
+import com.propertyservice.property_service.repository.property.PropertyTransactionTypeRepository;
 import com.propertyservice.property_service.repository.schedule.ScheduleRepository;
 import com.propertyservice.property_service.utils.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +47,7 @@ public class ClientService {
     private final ScheduleRepository scheduleRepository;
     private final ShowingPropertyRepository showingPropertyRepository;
     private final PropertyRepository propertyRepository;
+    private final PropertyTransactionTypeRepository propertyTransactionTypeRepository;
 
     @Transactional
     public void registerClient(ClientRegisterRequest request) {
@@ -195,14 +198,18 @@ public class ClientService {
 
     @Transactional
     public void createShowingProperty(ShowingPropertyRegisterRequest request) {
+        Property property = propertyRepository.findById(request.getPropertyId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
         showingPropertyRepository.save(
                 ShowingProperty.builder()
                         .client(clientRepository.findById(request.getClientId()).orElseThrow(
                                 () -> new BusinessException(ErrorCode.CLIENT_NOT_FOUND)
                         ))
-                        .property(propertyRepository.findById(request.getPropertyId()).orElseThrow(
-                                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
-                        ))
+                        .property(property)
+                        .showingPropertyTransactionType(
+                                propertyTransactionTypeRepository.findByProperty(property)
+                        )
                         .build()
         );
     }
