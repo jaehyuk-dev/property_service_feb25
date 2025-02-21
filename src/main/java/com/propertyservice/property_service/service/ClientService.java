@@ -144,7 +144,7 @@ public class ClientService {
                             .picUserName(schedule.getClient().getPicUser().getName())
                             .scheduleType(schedule.getScheduleType().getLabel())
                             .scheduleRemark(schedule.getRemark())
-                            .isCompleted(false)
+                            .isCompleted(schedule.isCompleted())
                             .build()
             );
         }
