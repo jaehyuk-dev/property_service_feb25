@@ -25,7 +25,7 @@ public class ShowingPropertyRepositoryImpl implements ShowingPropertyRepositoryC
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ShowingPropertyDto> searchShowingPropertyByClient(Client client) {
+    public List<ShowingPropertyDto> searchShowingPropertyByClientId(Long clientId) {
         return queryFactory
                 .select(
                         new QShowingPropertyDto(
@@ -48,7 +48,7 @@ public class ShowingPropertyRepositoryImpl implements ShowingPropertyRepositoryC
                 .leftJoin(building).on(property.building.eq(building))
                 .leftJoin(propertyTransactionType).on(property.eq(propertyTransactionType.property))
                 .where(
-                        showingProperty.client.eq(client)
+                        showingProperty.client.id.eq(clientId)
                 )
                 .fetch();
     }

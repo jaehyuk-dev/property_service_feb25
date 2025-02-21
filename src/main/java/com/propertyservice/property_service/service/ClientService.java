@@ -8,10 +8,7 @@ import com.propertyservice.property_service.domain.client.enums.ClientStatus;
 import com.propertyservice.property_service.domain.common.eums.Gender;
 import com.propertyservice.property_service.domain.common.eums.TransactionType;
 import com.propertyservice.property_service.domain.schedule.Schedule;
-import com.propertyservice.property_service.dto.client.ClientDetailResponse;
-import com.propertyservice.property_service.dto.client.ClientRegisterRequest;
-import com.propertyservice.property_service.dto.client.ClientSummaryDto;
-import com.propertyservice.property_service.dto.client.ShowingPropertyDto;
+import com.propertyservice.property_service.dto.client.*;
 import com.propertyservice.property_service.dto.common.RemarkDto;
 import com.propertyservice.property_service.dto.common.SearchCondition;
 import com.propertyservice.property_service.dto.schedule.ScheduleDto;
@@ -110,33 +107,11 @@ public class ClientService {
             clientExpectedTransactionTypeList.add(type.getExpectedTransactionType().getLabel());
         }
 
-        List<ScheduleDto> scheduleDtoList = new ArrayList<>();
-        for (Schedule schedule : scheduleRepository.findAllByClient(client)) {
-            scheduleDtoList.add(
-                    ScheduleDto.builder()
-                            .scheduleId(schedule.getId())
-                            .clientName(schedule.getClient().getName())
-                            .picUserName(schedule.getClient().getPicUser().getName())
-                            .scheduleType(schedule.getScheduleType().getLabel())
-                            .scheduleRemark(schedule.getRemark())
-                            .isCompleted(false)
-                            .build()
-            );
-        }
+        List<ScheduleDto> scheduleDtoList = searchClientScheduleList(clientId);
 
-        List<ShowingPropertyDto> showingPropertyDtoList = showingPropertyRepository.searchShowingPropertyByClient(client);
+        List<ShowingPropertyDto> showingPropertyDtoList = searchClientShowingPropertyList(clientId);
 
-        List<RemarkDto> clientRemarkList = new ArrayList<>();
-        for (ClientRemark clientRemark : clientRemarkRepository.findAllByClient(client)) {
-            clientRemarkList.add(
-                    RemarkDto.builder()
-                            .remarkId(clientRemark.getId())
-                            .remark(clientRemark.getRemark())
-                            .createdAt(clientRemark.getCreatedDate().toLocalDate())
-                            .createdBy(Objects.requireNonNull(officeUserRepository.findById(clientRemark.getCreatedByUserId()).orElse(null)).getName())
-                            .build()
-            );
-        }
+        List<RemarkDto> clientRemarkList = searchClientRemarkList(clientId);
 
         return ClientDetailResponse.builder()
                 .clientId(client.getId())
@@ -154,5 +129,65 @@ public class ClientService {
                 .showingPropertyList(showingPropertyDtoList)
                 .clientRemarkList(clientRemarkList)
                 .build();
+    }
+
+    public List<ScheduleDto> searchClientScheduleList(Long clientId) {
+        Client client = clientRepository.findById(clientId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CLIENT_NOT_FOUND)
+        );
+        List<ScheduleDto> scheduleDtoList = new ArrayList<>();
+        for (Schedule schedule : scheduleRepository.findAllByClient(client)) {
+            scheduleDtoList.add(
+                    ScheduleDto.builder()
+                            .scheduleId(schedule.getId())
+                            .clientName(schedule.getClient().getName())
+                            .picUserName(schedule.getClient().getPicUser().getName())
+                            .scheduleType(schedule.getScheduleType().getLabel())
+                            .scheduleRemark(schedule.getRemark())
+                            .isCompleted(false)
+                            .build()
+            );
+        }
+        return scheduleDtoList;
+    }
+
+    public List<ShowingPropertyDto> searchClientShowingPropertyList(Long clientId) {
+        return showingPropertyRepository.searchShowingPropertyByClientId(clientId);
+    }
+
+    public List<RemarkDto> searchClientRemarkList(Long clientId) {
+        Client client = clientRepository.findById(clientId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CLIENT_NOT_FOUND)
+        );
+        List<RemarkDto> clientRemarkList = new ArrayList<>();
+        for (ClientRemark clientRemark : clientRemarkRepository.findAllByClient(client)) {
+            clientRemarkList.add(
+                    RemarkDto.builder()
+                            .remarkId(clientRemark.getId())
+                            .remark(clientRemark.getRemark())
+                            .createdAt(clientRemark.getCreatedDate().toLocalDate())
+                            .createdBy(Objects.requireNonNull(officeUserRepository.findById(clientRemark.getCreatedByUserId()).orElse(null)).getName())
+                            .build()
+            );
+        }
+        return clientRemarkList;
+    }
+
+    @Transactional
+    public void registerClientRemark(ClientRemarkRequest request) {
+        Client client = clientRepository.findById(request.getClientId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.CLIENT_NOT_FOUND)
+        );
+        clientRemarkRepository.save(
+                ClientRemark.builder()
+                        .client(client)
+                        .remark(request.getClientRemark())
+                        .build()
+        );
+    }
+
+    @Transactional
+    public void deleteClientRemark(Long clientRemarkId) {
+        clientRemarkRepository.deleteById(clientRemarkId);
     }
 }

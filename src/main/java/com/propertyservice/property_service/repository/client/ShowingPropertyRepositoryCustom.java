@@ -6,5 +6,5 @@ import com.propertyservice.property_service.dto.client.ShowingPropertyDto;
 import java.util.List;
 
 public interface ShowingPropertyRepositoryCustom {
-    List<ShowingPropertyDto> searchShowingPropertyByClient(Client client);
+    List<ShowingPropertyDto> searchShowingPropertyByClientId(Long clientId);
 }
