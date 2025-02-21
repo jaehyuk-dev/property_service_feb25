@@ -30,7 +30,7 @@ public class ClientRepositoryImpl implements ClientRepositoryCustom {
                         client.phoneNumber,        // clientPhoneNumber
                         client.picUser.name,           // picManager (담당자)
                         client.source,             // clientSource
-                        client.moveInDate          // moveInDate
+                        client.expectedMoveInDate          // moveInDate
                 ))
                 .from(client)
                 .where(

@@ -54,11 +54,11 @@ public class Client extends BaseEntity {
     @Column(name = "client_type", columnDefinition = "VARCHAR(255) DEFAULT '기타'")
     private String type;
 
-    @Column(name = "client_move_in_date")
-    private LocalDate moveInDate;
+    @Column(name = "client_expected_move_in_date")
+    private LocalDate expectedMoveInDate;
 
     @Builder
-    public Client(Office pocOffice, OfficeUser picUser, ClientStatus status, String name, String phoneNumber, Gender gender, String source, String type, LocalDate moveInDate) {
+    public Client(Office pocOffice, OfficeUser picUser, ClientStatus status, String name, String phoneNumber, Gender gender, String source, String type, LocalDate expectedMoveInDate) {
         this.pocOffice = pocOffice;
         this.picUser = picUser;
         this.status = status;
@@ -67,6 +67,6 @@ public class Client extends BaseEntity {
         this.gender = gender;
         this.source = source;
         this.type = type;
-        this.moveInDate = moveInDate;
+        this.expectedMoveInDate = expectedMoveInDate;
     }
 }

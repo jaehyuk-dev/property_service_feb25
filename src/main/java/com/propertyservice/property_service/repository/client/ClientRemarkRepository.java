@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ClientRemarkRepository extends JpaRepository<ClientRemark, Long> {
     List<ClientRemark> findByClient(Client client);
+
+    List<ClientRemark> findAllByClient(Client client);
 }

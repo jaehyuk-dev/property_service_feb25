@@ -9,4 +9,6 @@ import java.util.List;
 public interface ClientExpectedTransactionTypeRepository extends JpaRepository<ClientExpectedTransactionType, Long> {
     List<ClientExpectedTransactionType> findByClient(Client client);
     void deleteByClient(Client client);
+
+    List<ClientExpectedTransactionType> findAllByClient(Client client);
 }
