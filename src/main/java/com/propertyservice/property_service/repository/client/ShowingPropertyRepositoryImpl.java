@@ -2,15 +2,15 @@ package com.propertyservice.property_service.repository.client;
 
 import com.propertyservice.property_service.domain.client.Client;
 import com.propertyservice.property_service.domain.common.eums.TransactionType;
+import com.propertyservice.property_service.domain.property.enums.PropertyStatus;
 import com.propertyservice.property_service.dto.client.QShowingPropertyDto;
 import com.propertyservice.property_service.dto.client.ShowingPropertyDto;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.EnumPath;
-import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.propertyservice.property_service.domain.client.QShowingProperty.showingProperty;
@@ -30,8 +30,9 @@ public class ShowingPropertyRepositoryImpl implements ShowingPropertyRepositoryC
                 .select(
                         new QShowingPropertyDto(
                                 showingProperty.id,
-                                showingProperty.property.id,
-                                showingProperty.property.propertyType,
+                                property.id,
+                                getPropertyStatusLabel(property.propertyStatus),
+                                property.propertyType,
                                 building.zoneCode
                                         .prepend("(")           // "(" + zoneCode
                                         .concat(") ")          // + ") "
@@ -39,8 +40,8 @@ public class ShowingPropertyRepositoryImpl implements ShowingPropertyRepositoryC
                                         .concat(" ")
                                         .concat(property.roomNumber),
                                 getTransactionTypeLabel(propertyTransactionType.transactionType),
-                                propertyTransactionType.price1,
-                                propertyTransactionType.price2
+                                getTransactionTypeCode(propertyTransactionType.transactionType),
+                                getPropertyPrice(propertyTransactionType.transactionType, propertyTransactionType.price1, propertyTransactionType.price2) // ✅ 가격 추가
                         )
                 )
                 .from(showingProperty)
@@ -48,7 +49,9 @@ public class ShowingPropertyRepositoryImpl implements ShowingPropertyRepositoryC
                 .leftJoin(building).on(property.building.eq(building))
                 .leftJoin(propertyTransactionType).on(property.eq(propertyTransactionType.property))
                 .where(
-                        showingProperty.client.id.eq(clientId)
+                        showingProperty.client.id.eq(clientId),
+                        property.propertyStatus.eq(PropertyStatus.OCCUPIED).not(),
+                        showingProperty.property.propertyStatus.eq(PropertyStatus.OCCUPIED).not()
                 )
                 .fetch();
     }
@@ -59,5 +62,61 @@ public class ShowingPropertyRepositoryImpl implements ShowingPropertyRepositoryC
                 .when(transactionType.eq(TransactionType.JEONSE)).then(TransactionType.JEONSE.getLabel())
                 .when(transactionType.eq(TransactionType.SHORTTERM)).then(TransactionType.SHORTTERM.getLabel())
                 .otherwise("알 수 없음"); // ✅ 예외 처리
+    }
+
+    private NumberExpression<Integer> getTransactionTypeCode(EnumPath<TransactionType> transactionType) {
+        return new CaseBuilder()
+                .when(transactionType.eq(TransactionType.MONTHLY)).then(TransactionType.MONTHLY.getValue())
+                .when(transactionType.eq(TransactionType.JEONSE)).then(TransactionType.JEONSE.getValue())
+                .when(transactionType.eq(TransactionType.SHORTTERM)).then(TransactionType.SHORTTERM.getValue())
+                .otherwise(60); // ✅ 예외 처리
+    }
+
+    private StringExpression getPropertyStatusLabel(EnumPath<PropertyStatus> propertyStatus) {
+        return new CaseBuilder()
+                .when(propertyStatus.eq(PropertyStatus.VACANT)).then(PropertyStatus.VACANT.getLabel())
+                .when(propertyStatus.eq(PropertyStatus.CONTRACTING)).then(PropertyStatus.CONTRACTING.getLabel())
+                .when(propertyStatus.eq(PropertyStatus.CONTRACTING)).then(PropertyStatus.CONTRACTING.getLabel())
+                .otherwise("알 수 없음"); // ✅ 예외 처리
+    }
+
+    private StringExpression getPropertyPrice(EnumPath<TransactionType> transactionType, NumberPath<BigDecimal> price1, NumberPath<BigDecimal> price2) {
+        return new CaseBuilder()
+                .when(transactionType.eq(TransactionType.MONTHLY))
+                .then(formatPrice(price1).concat(" / ").concat(formatPrice(price2))) // 월세: 보증금 / 월세
+                .when(transactionType.eq(TransactionType.SHORTTERM))
+                .then(formatPrice(price1).concat(" / ").concat(formatPrice(price2))) // 단기: 보증금 / 월세
+                .when(transactionType.eq(TransactionType.JEONSE))
+                .then(formatPrice(price1)) // 전세: 보증금만 표시
+                .otherwise(""); // 예외 처리
+    }
+
+    /**
+     * 가격을 "억"과 "만" 단위로 변환하는 함수 (BigDecimal 지원)
+     */
+    private StringExpression formatPrice(NumberPath<BigDecimal> price) {
+        return Expressions.stringTemplate(
+                "CASE " +
+                        "WHEN {0} >= 100000000 THEN " +
+                        "CONCAT(" +
+                        "FLOOR({0} / 100000000), '억', " +
+                        "CASE WHEN FLOOR(({0} - (FLOOR({0} / 100000000) * 100000000)) / 10000) > 0 " +
+                        "THEN CONCAT(' ', FLOOR(({0} - (FLOOR({0} / 100000000) * 100000000)) / 10000), '만') " +
+                        "ELSE '' END, " +
+                        "CASE WHEN FLOOR({0} - (FLOOR({0} / 10000) * 10000)) > 0 " +
+                        "THEN CONCAT(' ', FLOOR({0} - (FLOOR({0} / 10000) * 10000)), '원') " +
+                        "ELSE ' 원' END" +
+                        ") " +
+                        "WHEN {0} >= 10000 THEN " +
+                        "CONCAT(" +
+                        "FLOOR({0} / 10000), '만', " +
+                        "CASE WHEN FLOOR({0} - (FLOOR({0} / 10000) * 10000)) > 0 " +
+                        "THEN CONCAT(' ', FLOOR({0} - (FLOOR({0} / 10000) * 10000)), '원') " +
+                        "ELSE ' 원' END" +
+                        ") " +
+                        "ELSE CONCAT(FLOOR({0}), '원') " +
+                        "END",
+                price
+        );
     }
 }
