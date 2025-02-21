@@ -57,6 +57,10 @@ public class Client extends BaseEntity {
     @Column(name = "client_expected_move_in_date")
     private LocalDate expectedMoveInDate;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "showing_property_id")
+    private ShowingProperty selectedShowingProperty;
+
     @Builder
     public Client(Office pocOffice, OfficeUser picUser, ClientStatus status, String name, String phoneNumber, Gender gender, String source, String type, LocalDate expectedMoveInDate) {
         this.pocOffice = pocOffice;
@@ -68,5 +72,13 @@ public class Client extends BaseEntity {
         this.source = source;
         this.type = type;
         this.expectedMoveInDate = expectedMoveInDate;
+    }
+
+    public void updateClientStatus(ClientStatus status) {
+        this.status = status;
+    }
+
+    public void updateClientSelectedShowingProperty(ShowingProperty showingProperty) {
+        this.selectedShowingProperty = showingProperty;
     }
 }

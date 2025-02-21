@@ -175,4 +175,19 @@ public class ClientController {
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
+    @Operation(summary = "고객 상태 변경", description = "고객의 생태를 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PutMapping("/status")
+    public ResponseEntity<ApiResponseDto<String>> updateClientStatus(@Validated @RequestBody ClientStatusUpdateRequest request) {
+        clientService.updateClientStatus(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
+
 }

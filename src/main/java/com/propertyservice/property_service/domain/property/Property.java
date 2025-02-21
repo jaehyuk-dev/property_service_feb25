@@ -108,4 +108,15 @@ public class Property {
         this.heatingType = heatingType;
         this.maintenancePrice = maintenancePrice;
     }
+
+    public void updatePropertyStatus(PropertyStatus propertyStatus) {
+        this.propertyStatus = propertyStatus;
+    }
+
+    public void updatePropertyStatusContractCompleted(LocalDate moveInDate, LocalDate moveOutDate, LocalDate availableMoveInDate, PropertyStatus propertyStatus) {
+        this.moveInDate = moveInDate;
+        this.moveOutDate = moveOutDate;
+        this.availableMoveInDate = availableMoveInDate;
+        this.propertyStatus = propertyStatus;
+    }
 }
