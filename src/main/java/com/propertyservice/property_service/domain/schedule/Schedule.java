@@ -54,4 +54,8 @@ public class Schedule extends BaseEntity {
         this.remark = remark;
         this.isCompleted = isCompleted;
     }
+
+    public void updateScheduleCompleted(boolean isCompleted) {
+        this.isCompleted = isCompleted;
+    }
 }
