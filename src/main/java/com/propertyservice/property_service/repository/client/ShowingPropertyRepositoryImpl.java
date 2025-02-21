@@ -83,38 +83,33 @@ public class ShowingPropertyRepositoryImpl implements ShowingPropertyRepositoryC
     private StringExpression getPropertyPrice(EnumPath<TransactionType> transactionType, NumberPath<BigDecimal> price1, NumberPath<BigDecimal> price2) {
         return new CaseBuilder()
                 .when(transactionType.eq(TransactionType.MONTHLY))
-                .then(formatPrice(price1).concat(" / ").concat(formatPrice(price2))) // 월세: 보증금 / 월세
+                .then(formatPrice(price1).concat(" / ").concat(formatPrice(price2)).concat(" 원")) // 월세: 보증금 / 월세 원
                 .when(transactionType.eq(TransactionType.SHORTTERM))
-                .then(formatPrice(price1).concat(" / ").concat(formatPrice(price2))) // 단기: 보증금 / 월세
+                .then(formatPrice(price1).concat(" / ").concat(formatPrice(price2)).concat(" 원")) // 단기: 보증금 / 월세 원
                 .when(transactionType.eq(TransactionType.JEONSE))
-                .then(formatPrice(price1)) // 전세: 보증금만 표시
+                .then(formatPrice(price1).concat(" 원")) // 전세: 전세금 원
                 .otherwise(""); // 예외 처리
     }
 
     /**
      * 가격을 "억"과 "만" 단위로 변환하는 함수 (BigDecimal 지원)
+     * 원 단위는 표시하지 않음
      */
     private StringExpression formatPrice(NumberPath<BigDecimal> price) {
         return Expressions.stringTemplate(
                 "CASE " +
                         "WHEN {0} >= 100000000 THEN " +
                         "CONCAT(" +
-                        "FLOOR({0} / 100000000), '억', " +
+                        "CAST(FLOOR({0} / 100000000) AS text), '억', " +
                         "CASE WHEN FLOOR(({0} - (FLOOR({0} / 100000000) * 100000000)) / 10000) > 0 " +
-                        "THEN CONCAT(' ', FLOOR(({0} - (FLOOR({0} / 100000000) * 100000000)) / 10000), '만') " +
-                        "ELSE '' END, " +
-                        "CASE WHEN FLOOR({0} - (FLOOR({0} / 10000) * 10000)) > 0 " +
-                        "THEN CONCAT(' ', FLOOR({0} - (FLOOR({0} / 10000) * 10000)), '원') " +
-                        "ELSE ' 원' END" +
+                        "THEN CONCAT(' ', CAST(FLOOR(({0} - (FLOOR({0} / 100000000) * 100000000)) / 10000) AS text), '만') " +
+                        "ELSE '' END" +
                         ") " +
                         "WHEN {0} >= 10000 THEN " +
                         "CONCAT(" +
-                        "FLOOR({0} / 10000), '만', " +
-                        "CASE WHEN FLOOR({0} - (FLOOR({0} / 10000) * 10000)) > 0 " +
-                        "THEN CONCAT(' ', FLOOR({0} - (FLOOR({0} / 10000) * 10000)), '원') " +
-                        "ELSE ' 원' END" +
+                        "CAST(FLOOR({0} / 10000) AS text), '만'" +
                         ") " +
-                        "ELSE CONCAT(FLOOR({0}), '원') " +
+                        "ELSE CAST(FLOOR({0}) AS text) " +
                         "END",
                 price
         );
