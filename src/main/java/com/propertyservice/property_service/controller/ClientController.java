@@ -55,7 +55,7 @@ public class ClientController {
                     content = @Content(mediaType = "application/json")),
     })
     @GetMapping("/list")
-    public ResponseEntity<ApiResponseDto<List<ClientSummaryDto>>> searchClientSummaryInfoList(SearchCondition condition) {
+    public ResponseEntity<ApiResponseDto<List<ClientSummaryDto>>> searchClientSummaryInfoList(@ModelAttribute SearchCondition condition) {
         return ResponseEntity.ok(new SuccessResponseDto<>(clientService.searchClientSummaryInfoList(condition)));
     }
 

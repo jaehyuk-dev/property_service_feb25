@@ -5,6 +5,7 @@ import com.propertyservice.property_service.domain.property.*;
 import com.propertyservice.property_service.domain.property.enums.*;
 import com.propertyservice.property_service.dto.common.ImageDto;
 import com.propertyservice.property_service.dto.common.RemarkDto;
+import com.propertyservice.property_service.dto.common.SearchCondition;
 import com.propertyservice.property_service.dto.common.TransactionTypeDto;
 import com.propertyservice.property_service.dto.file.FileUploadDto;
 import com.propertyservice.property_service.dto.property.*;
@@ -291,5 +292,9 @@ public class PropertyService {
                             .build()
             );
         }
+    }
+
+    public List<PropertyRecapDto> searchPropertyRecapList(SearchCondition condition) {
+        return propertyRepository.searchPropertyRecapList(condition, officeService.getCurrentUserEntity().getOffice().getId());
     }
 }

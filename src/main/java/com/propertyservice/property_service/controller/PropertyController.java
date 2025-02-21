@@ -1,10 +1,7 @@
 package com.propertyservice.property_service.controller;
 
 import com.propertyservice.property_service.dto.client.ClientRegisterRequest;
-import com.propertyservice.property_service.dto.common.ApiResponseDto;
-import com.propertyservice.property_service.dto.common.ImageDto;
-import com.propertyservice.property_service.dto.common.RemarkDto;
-import com.propertyservice.property_service.dto.common.SuccessResponseDto;
+import com.propertyservice.property_service.dto.common.*;
 import com.propertyservice.property_service.dto.property.*;
 import com.propertyservice.property_service.service.PropertyService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -173,6 +170,20 @@ public class PropertyController {
     public ResponseEntity<ApiResponseDto<String>> registerProperty(@Validated @RequestBody PropertyRegisterRequest request) {
         propertyService.registerProperty(request);
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
+
+    @Operation(summary = "매물 간략 조회", description = "매물의 간략 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/recap-list")
+    public ResponseEntity<ApiResponseDto<List<PropertyRecapDto>>> searchPropertyRecapList(@ModelAttribute SearchCondition condition) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertyRecapList(condition)));
     }
 
 }
