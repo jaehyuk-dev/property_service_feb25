@@ -19,6 +19,7 @@ import com.propertyservice.property_service.repository.client.ClientRemarkReposi
 import com.propertyservice.property_service.repository.client.ClientRepository;
 import com.propertyservice.property_service.repository.client.ShowingPropertyRepository;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
+import com.propertyservice.property_service.repository.property.PropertyRepository;
 import com.propertyservice.property_service.repository.schedule.ScheduleRepository;
 import com.propertyservice.property_service.utils.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +44,7 @@ public class ClientService {
     private final OfficeUserRepository officeUserRepository;
     private final ScheduleRepository scheduleRepository;
     private final ShowingPropertyRepository showingPropertyRepository;
+    private final PropertyRepository propertyRepository;
 
     @Transactional
     public void registerClient(ClientRegisterRequest request) {
@@ -190,4 +192,24 @@ public class ClientService {
     public void deleteClientRemark(Long clientRemarkId) {
         clientRemarkRepository.deleteById(clientRemarkId);
     }
+
+    @Transactional
+    public void createShowingProperty(ShowingPropertyRegisterRequest request) {
+        showingPropertyRepository.save(
+                ShowingProperty.builder()
+                        .client(clientRepository.findById(request.getClientId()).orElseThrow(
+                                () -> new BusinessException(ErrorCode.CLIENT_NOT_FOUND)
+                        ))
+                        .property(propertyRepository.findById(request.getPropertyId()).orElseThrow(
+                                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+                        ))
+                        .build()
+        );
+    }
+
+    @Transactional
+    public void removeShowingProperty(Long showingPropertyId){
+        showingPropertyRepository.deleteById(showingPropertyId);
+    }
+
 }

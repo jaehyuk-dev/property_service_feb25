@@ -145,4 +145,34 @@ public class ClientController {
         return ResponseEntity.ok(new SuccessResponseDto<>(clientService.searchClientShowingPropertyList(clientId)));
     }
 
+    @Operation(summary = "고객 보여줄 매물 등록", description = "고객의 보여줄 매물을 등록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PostMapping("/showing-property")
+    public ResponseEntity<ApiResponseDto<String>> createShowingProperty(@Validated @RequestBody ShowingPropertyRegisterRequest request) {
+        clientService.createShowingProperty(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
+
+    @Operation(summary = "고객 보여줄 매물 삭제", description = "고객의 보여줄 매물 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @DeleteMapping("/showing-property/{showingPropertyId}")
+    public ResponseEntity<ApiResponseDto<String>> removeShowingProperty(@PathVariable("showingPropertyId") Long showingPropertyId) {
+        clientService.removeShowingProperty(showingPropertyId);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
+
 }
