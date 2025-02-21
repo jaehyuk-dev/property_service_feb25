@@ -3,6 +3,7 @@ package com.propertyservice.property_service.domain.property;
 import com.propertyservice.property_service.domain.property.enums.OptionItemType;
 import com.propertyservice.property_service.domain.property.enums.OptionItemTypeConverter;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ public class PropertyOption {
     @Column(name = "option_item_type")
     private OptionItemType optionItemType;
 
+    @Builder
     public PropertyOption(OptionItemType optionItemType, Property property) {
         this.optionItemType = optionItemType;
         this.property = property;

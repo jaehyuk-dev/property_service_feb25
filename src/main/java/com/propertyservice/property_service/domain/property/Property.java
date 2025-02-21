@@ -1,16 +1,16 @@
 package com.propertyservice.property_service.domain.property;
 
 import com.propertyservice.property_service.domain.office.OfficeUser;
-import com.propertyservice.property_service.domain.property.enums.BuildingType;
-import com.propertyservice.property_service.domain.property.enums.BuildingTypeConverter;
-import com.propertyservice.property_service.domain.property.enums.PropertyStatus;
-import com.propertyservice.property_service.domain.property.enums.PropertyStatusConverter;
+import com.propertyservice.property_service.domain.property.enums.*;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -67,20 +67,27 @@ public class Property {
     @Column(name = "supply_area")
     private Double supplyArea;
 
-    @Column(name = "approval_date", nullable = false)
+    @Column(name = "approval_date")
     private LocalDate approvalDate;
 
     @Column(name = "move_in_date")
     private LocalDate moveInDate;
 
-    @Column(name = "move_out_date")
+    @Column(name = "move_out_date", nullable = true)
     private LocalDate moveOutDate;
 
-    @Column(name = "available_move_in_date", nullable = false)
+    @Column(name = "available_move_in_date")
     private LocalDate availableMoveInDate;
 
+    @Convert(converter = HeatingTypeConverter.class)
+    @Column(name = "heating_type", nullable = false)
+    private HeatingType heatingType;
+
+    @Schema(description = "관리비", example = "100000")
+    private BigDecimal maintenancePrice;
+
     @Builder
-    public Property(OfficeUser picUser, Building building, PropertyStatus propertyStatus, String ownerName, String ownerPhoneNumber, String ownerRelation, String roomNumber, String propertyType, String propertyFloor, String roomBathCount, String mainRoomDirection, Double exclusiveArea, Double supplyArea, LocalDate approvalDate, LocalDate moveInDate, LocalDate moveOutDate, LocalDate availableMoveInDate) {
+    public Property(OfficeUser picUser, Building building, PropertyStatus propertyStatus, String ownerName, String ownerPhoneNumber, String ownerRelation, String roomNumber, String propertyType, String propertyFloor, String roomBathCount, String mainRoomDirection, Double exclusiveArea, Double supplyArea, LocalDate approvalDate, LocalDate moveInDate, LocalDate moveOutDate, LocalDate availableMoveInDate, HeatingType heatingType, BigDecimal maintenancePrice) {
         this.picUser = picUser;
         this.building = building;
         this.propertyStatus = propertyStatus;
@@ -98,5 +105,7 @@ public class Property {
         this.moveInDate = moveInDate;
         this.moveOutDate = moveOutDate;
         this.availableMoveInDate = availableMoveInDate;
+        this.heatingType = heatingType;
+        this.maintenancePrice = maintenancePrice;
     }
 }

@@ -1,19 +1,18 @@
 package com.propertyservice.property_service.service;
 
-import com.propertyservice.property_service.domain.property.Building;
-import com.propertyservice.property_service.domain.property.BuildingPhoto;
-import com.propertyservice.property_service.domain.property.BuildingRemark;
-import com.propertyservice.property_service.domain.property.enums.BuildingType;
+import com.propertyservice.property_service.domain.common.eums.TransactionType;
+import com.propertyservice.property_service.domain.property.*;
+import com.propertyservice.property_service.domain.property.enums.*;
 import com.propertyservice.property_service.dto.common.ImageDto;
 import com.propertyservice.property_service.dto.common.RemarkDto;
+import com.propertyservice.property_service.dto.common.TransactionTypeDto;
 import com.propertyservice.property_service.dto.file.FileUploadDto;
 import com.propertyservice.property_service.dto.property.*;
 import com.propertyservice.property_service.error.ErrorCode;
 import com.propertyservice.property_service.error.exception.BusinessException;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
-import com.propertyservice.property_service.repository.property.BuildingPhotoRepository;
-import com.propertyservice.property_service.repository.property.BuildingRemarkRepository;
-import com.propertyservice.property_service.repository.property.BuildingRepository;
+import com.propertyservice.property_service.repository.property.*;
+import com.propertyservice.property_service.utils.DateTimeUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -29,11 +28,19 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class PropertyService {
 
+    private final OfficeService officeService;
+    private final OfficeUserRepository officeUserRepository;
+
     private final BuildingRepository buildingRepository;
     private final BuildingRemarkRepository buildingRemarkRepository;
     private final BuildingPhotoRepository buildingPhotoRepository;
-    private final OfficeService officeService;
-    private final OfficeUserRepository officeUserRepository;
+
+    private final PropertyRepository propertyRepository;
+    private final PropertyMaintenanceItemRepository propertyMaintenanceItemRepository;
+    private final PropertyOptionRepository propertyOptionRepository;
+    private final PropertyPhotoRepository propertyPhotoRepository;
+    private final PropertyRemarkRepository propertyRemarkRepository;
+    private final PropertyTransactionTypeRepository propertyTransactionTypeRepository;
 
     @Transactional
     public void registerBuilding(BuildingRegisterRequest request) {
@@ -196,6 +203,91 @@ public class PropertyService {
                             .building(building)
                             .isMain(i == request.getBuildingMainPhotoIndex())
                             .photoUrl(request.getPhotoUrlList().get(i))
+                            .build()
+            );
+        }
+    }
+
+    @Transactional
+    public void registerProperty(PropertyRegisterRequest request){
+        Building building = buildingRepository.findById(request.getBuildingId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.BUILDING_NOT_FOUND)
+        );
+
+        Property property = propertyRepository.save(
+                Property.builder()
+                        .picUser(officeService.getCurrentUserEntity())
+                        .building(building)
+
+                        .ownerName(request.getOwnerName())
+                        .ownerPhoneNumber(request.getOwnerPhoneNumber())
+                        .ownerRelation(request.getOwnerRelation())
+
+                        .roomNumber(request.getRoomNumber())
+                        .propertyType(request.getPropertyType())
+                        .propertyStatus(PropertyStatus.fromValue(request.getPropertyStatusCode()))
+
+                        .propertyFloor(request.getPropertyFloor())
+                        .roomBathCount(request.getRoomBathCount())
+                        .mainRoomDirection(request.getMainRoomDirection())
+
+                        .exclusiveArea(request.getExclusiveArea())
+                        .supplyArea(request.getSupplyArea())
+
+                        .approvalDate(DateTimeUtil.parseYYYYMMDD(request.getApprovalDate()).orElse(null))
+
+                        .moveInDate(DateTimeUtil.parseYYYYMMDD(request.getMoveInDate()).orElse(null))
+                        .moveOutDate(DateTimeUtil.parseYYYYMMDD(request.getMoveOutDate()).orElse(null))
+
+                        .availableMoveInDate(DateTimeUtil.parseYYYYMMDD(request.getMoveInDate()).orElse(null))
+
+                        .heatingType(HeatingType.fromValue(request.getHeatingTypeCode()))
+                        .maintenancePrice(request.getMaintenancePrice())
+                        .build()
+        );
+
+        propertyRemarkRepository.save(
+                PropertyRemark.builder()
+                        .property(property)
+                        .remark(request.getRemark())
+                        .build()
+        );
+
+        for (TransactionTypeDto transactionTypeDto : request.getTransactionTypeList()) {
+            propertyTransactionTypeRepository.save(
+                    PropertyTransactionType.builder()
+                            .property(property)
+                            .transactionType(TransactionType.fromValue(transactionTypeDto.getTransactionCode()))
+                            .price1(transactionTypeDto.getPrice1())
+                            .price2(transactionTypeDto.getPrice2())
+                            .build()
+            );
+        }
+
+        for (Integer i : request.getMaintenanceItemCodeList()) {
+            propertyMaintenanceItemRepository.save(
+                    PropertyMaintenanceItem.builder()
+                            .property(property)
+                            .maintenanceItem(MaintenanceItemType.fromValue(i))
+                            .build()
+            );
+        }
+
+        for (Integer i : request.getOptionItemCodeList()) {
+            propertyOptionRepository.save(
+                    PropertyOption.builder()
+                            .property(property)
+                            .optionItemType(OptionItemType.fromValue(i))
+                            .build()
+            );
+        }
+
+        for(int i = 0; i < request.getPhotoList().size(); i++){
+            propertyPhotoRepository.save(
+                    PropertyPhoto.builder()
+                            .property(property)
+                            .isMain(i == request.getPropertyMainPhotoIndex())
+                            .photoUrl(request.getPhotoList().get(i))
                             .build()
             );
         }
