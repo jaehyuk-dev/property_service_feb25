@@ -283,4 +283,37 @@ public class ClientService {
             );
         }
     }
+
+    @Transactional
+    public void updateClientDetail(ClientUpdateRequest request) {
+        clientRepository.findById(request.getClientId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.CLIENT_NOT_FOUND)
+        ).updateClientDetail(
+                request.getClientName(),
+                request.getClientPhoneNumber(),
+                Gender.fromValue(request.getClientGenderCode()),
+                request.getClientSource(),
+                request.getClientType(),
+                DateTimeUtil.parseYYYYMMDD(request.getExpectedMoveInDate()).orElseThrow(
+                        () -> new BusinessException(ErrorCode.INVALID_DATA_FORMAT)
+                )
+        );
+    }
+
+    @Transactional
+    public void updateClientExpectedTransactionType(ClientUpdateExpectedTransactionTypeRequest request) {
+        Client client = clientRepository.findById(request.getClientId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.CLIENT_NOT_FOUND)
+        );
+        clientExpectedTransactionTypeRepository.deleteByClient(client);
+
+        for (Integer i : request.getExpectedTransactionTypeCodeList()) {
+            clientExpectedTransactionTypeRepository.save(
+                    ClientExpectedTransactionType.builder()
+                            .client(client)
+                            .expectedTransactionType(TransactionType.fromValue(i))
+                            .build()
+            );
+        }
+    }
 }

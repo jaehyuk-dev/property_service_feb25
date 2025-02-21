@@ -81,4 +81,13 @@ public class Client extends BaseEntity {
     public void updateClientSelectedShowingProperty(ShowingProperty showingProperty) {
         this.selectedShowingProperty = showingProperty;
     }
+
+    public void updateClientDetail(String name, String phoneNumber, Gender gender, String source, String type, LocalDate expectedMoveInDate) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.source = source;
+        this.type = type;
+        this.expectedMoveInDate = expectedMoveInDate;
+    }
 }

@@ -190,4 +190,34 @@ public class ClientController {
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
+    @Operation(summary = "고객 정보 변경", description = "고객의 정보를 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PutMapping("/")
+    public ResponseEntity<ApiResponseDto<String>> updateClientDetail(@Validated @RequestBody ClientUpdateRequest request) {
+        clientService.updateClientDetail(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
+
+    @Operation(summary = "고객 희망 거래유형 변경", description = "고객의 희망 거래유형을 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PutMapping("/expected-transaction-type")
+    public ResponseEntity<ApiResponseDto<String>> updateClientDetail(@Validated @RequestBody ClientUpdateExpectedTransactionTypeRequest request) {
+        clientService.updateClientExpectedTransactionType(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
+
 }
