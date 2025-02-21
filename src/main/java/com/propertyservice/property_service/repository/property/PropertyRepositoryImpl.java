@@ -4,7 +4,9 @@ import com.propertyservice.property_service.domain.common.eums.TransactionType;
 import com.propertyservice.property_service.domain.property.enums.PropertyStatus;
 import com.propertyservice.property_service.dto.common.SearchCondition;
 import com.propertyservice.property_service.dto.property.PropertyRecapDto;
+import com.propertyservice.property_service.dto.property.PropertySummaryDto;
 import com.propertyservice.property_service.dto.property.QPropertyRecapDto;
+import com.propertyservice.property_service.dto.property.QPropertySummaryDto;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.util.List;
 
 import static com.propertyservice.property_service.domain.property.QBuilding.building;
 import static com.propertyservice.property_service.domain.property.QProperty.property;
+import static com.propertyservice.property_service.domain.property.QPropertyPhoto.propertyPhoto;
 import static com.propertyservice.property_service.domain.property.QPropertyTransactionType.propertyTransactionType;
 
 @Repository
@@ -26,7 +29,7 @@ public class PropertyRepositoryImpl implements PropertyRepositoryCustom {
 
     @Override
     public List<PropertyRecapDto> searchPropertyRecapList(SearchCondition condition, Long officeId) {
-        return         queryFactory
+        return queryFactory
                 .select(
                         new QPropertyRecapDto(
                                 property.id,
@@ -47,11 +50,41 @@ public class PropertyRepositoryImpl implements PropertyRepositoryCustom {
                 .leftJoin(building).on(property.building.eq(building))
                 .leftJoin(propertyTransactionType).on(property.eq(propertyTransactionType.property))
                 .where(
-                        property.building.pocOffice.id.eq(officeId),
+                        building.pocOffice.id.eq(officeId),
                         property.propertyStatus.eq(PropertyStatus.OCCUPIED).not(),
                         searchByType(condition.getSearchType(), condition.getKeyword())
                 )
                 .fetch();
+    }
+
+    @Override
+    public List<PropertySummaryDto> searchPropertySummaryList(SearchCondition condition, Long officeId) {
+         return queryFactory
+                 .select(
+                         new QPropertySummaryDto(
+                                 property.id,
+                                 getPropertyStatusLabel(property.propertyStatus),
+                                 property.propertyType,
+                                 building.zoneCode
+                                         .prepend("(")           // "(" + zoneCode
+                                         .concat(") ")          // + ") "
+                                         .concat(building.address)
+                                         .concat(" ")
+                                         .concat(property.roomNumber),
+                                 property.exclusiveArea,
+                                 propertyPhoto.photoUrl
+                         )
+
+                 )
+                 .from(property)
+                 .leftJoin(building).on(property.building.eq(building))
+                 .leftJoin(propertyTransactionType).on(property.eq(propertyTransactionType.property))
+                 .leftJoin(propertyPhoto).on(property.eq(propertyPhoto.property).and(propertyPhoto.isMain.isTrue()))
+                 .where(
+                         building.pocOffice.id.eq(officeId),
+                         searchByType2(condition.getSearchType(), condition.getKeyword())
+                 )
+                 .fetch();
     }
 
     private BooleanExpression searchByType(String searchType, String keyword) {
@@ -67,6 +100,26 @@ public class PropertyRepositoryImpl implements PropertyRepositoryCustom {
                     .or(building.jibunAddress.containsIgnoreCase(keyword));
             case "담당자" -> property.picUser.name.containsIgnoreCase(keyword);
             case "임대인" -> property.ownerName.containsIgnoreCase(keyword);
+            case "주소" -> building.zoneCode.containsIgnoreCase(keyword)
+                    .or(building.address.containsIgnoreCase(keyword))
+                    .or(building.jibunAddress.containsIgnoreCase(keyword));
+            default -> Expressions.booleanTemplate("false"); // ❗잘못된 경우 필터링
+        };
+    }
+
+    private BooleanExpression searchByType2(String searchType, String keyword) {
+        if (!StringUtils.hasText(keyword)) {
+            return null; // 검색어가 없으면 필터 미적용
+        }
+
+        return switch (searchType) {
+            case "전체" -> property.ownerName.containsIgnoreCase(keyword)
+                    .or(property.ownerPhoneNumber.containsIgnoreCase(keyword))
+                    .or(building.zoneCode.containsIgnoreCase(keyword))
+                    .or(building.address.containsIgnoreCase(keyword))
+                    .or(building.jibunAddress.containsIgnoreCase(keyword));
+            case "임대인" -> property.ownerName.containsIgnoreCase(keyword);
+            case "임대인 전화번호" -> property.ownerPhoneNumber.containsIgnoreCase(keyword);
             case "주소" -> building.zoneCode.containsIgnoreCase(keyword)
                     .or(building.address.containsIgnoreCase(keyword))
                     .or(building.jibunAddress.containsIgnoreCase(keyword));

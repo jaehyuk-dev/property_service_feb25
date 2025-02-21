@@ -69,4 +69,8 @@ public class ScheduleController {
         scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
+
+    // 한 달 내 하루당 일정 목록 갯수 조회
+
+    // 선택 일 일정 목록 조회
 }

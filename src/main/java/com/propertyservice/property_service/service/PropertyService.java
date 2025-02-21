@@ -14,6 +14,7 @@ import com.propertyservice.property_service.error.exception.BusinessException;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
 import com.propertyservice.property_service.repository.property.*;
 import com.propertyservice.property_service.utils.DateTimeUtil;
+import com.propertyservice.property_service.utils.PriceFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -296,5 +297,35 @@ public class PropertyService {
 
     public List<PropertyRecapDto> searchPropertyRecapList(SearchCondition condition) {
         return propertyRepository.searchPropertyRecapList(condition, officeService.getCurrentUserEntity().getOffice().getId());
+    }
+
+    public List<PropertySummaryDto> searchPropertySummaryList(SearchCondition condition) {
+        List<PropertySummaryDto> propertySummaryDtoList = propertyRepository.searchPropertySummaryList(condition, officeService.getCurrentUserEntity().getOffice().getId());
+
+        for (PropertySummaryDto propertySummaryDto : propertySummaryDtoList) {
+            List<PropertyTransactionDto> propertyTransactionDtoList = new ArrayList<>();
+
+            List<PropertyTransactionType> allByProperty = propertyTransactionTypeRepository.findAllByProperty((
+                    propertyRepository.findById(propertySummaryDto.getPropertyId()).orElseThrow(
+                            () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+                    )
+            ));
+
+            allByProperty.forEach(propertyTransactionType -> {
+                propertyTransactionDtoList.add(
+                        PropertyTransactionDto.builder()
+                                .transactionType(propertyTransactionType.getTransactionType().getLabel())
+                                .price(PriceFormatter.format(
+                                        propertyTransactionType.getPrice1(),
+                                        propertyTransactionType.getPrice2(),
+                                        propertyTransactionType.getTransactionType()
+                                ))
+                                .build()
+                );
+            });
+            propertySummaryDto.setPropertyTransactionList(propertyTransactionDtoList);
+        }
+
+        return propertySummaryDtoList;
     }
 }

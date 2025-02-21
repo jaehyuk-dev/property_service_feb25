@@ -186,4 +186,36 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertyRecapList(condition)));
     }
 
+    // 매물 목록 조회
+    @Operation(summary = "매물 요약 조회", description = "매물의 요약 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/summary-list")
+    public ResponseEntity<ApiResponseDto<List<PropertySummaryDto>>> searchPropertySummaryList(@ModelAttribute SearchCondition condition) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertySummaryList(condition)));
+    }
+
+
+    // 매물 상세 정보 조회
+
+    // 매물 정보 수정
+
+    // 매물 특이사항 추가
+
+    // 매물 특이사항 제거
+
+    // 매물 특이사항 목록 조회
+
+    // 매물 이미지 수정
+
+    // 매물 상태 변경 가능 확인
+
+    // 매물 상태 변경
+
 }
