@@ -54,6 +54,7 @@ public class PropertyController {
     public ResponseEntity<ApiResponseDto<List<BuildingSummaryDto>>> searchBuildingSummaryList(@RequestParam(value = "searchWord", defaultValue = "") String searchWord) {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchBuildingSummaryList(searchWord)));
     }
+    // todo 빌딩 대표 이미지 추가 작업
 
     @Operation(summary = "건물 상세 조회", description = "건물 상세 정보를 조회합니다.")
     @ApiResponses(value = {
@@ -201,8 +202,21 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertySummaryList(condition)));
     }
 
-
     // 매물 상세 정보 조회
+    @Operation(summary = "매물 상세 정보 조회", description = "매물의 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/{propertyId}")
+    public ResponseEntity<ApiResponseDto<PropertyDetailResponse>> searchPropertySummaryList(@PathVariable(value = "propertyId") Long propertyId) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertyDetail(propertyId)));
+    }
+
 
     // 매물 정보 수정
 

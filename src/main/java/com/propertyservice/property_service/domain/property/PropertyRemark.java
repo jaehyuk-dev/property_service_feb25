@@ -1,5 +1,6 @@
 package com.propertyservice.property_service.domain.property;
 
+import com.propertyservice.property_service.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Table(name = "property_remark")
-public class PropertyRemark {
+public class PropertyRemark extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "property_remark_id", updatable = false, nullable = false)

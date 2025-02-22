@@ -11,6 +11,7 @@ import com.propertyservice.property_service.dto.file.FileUploadDto;
 import com.propertyservice.property_service.dto.property.*;
 import com.propertyservice.property_service.error.ErrorCode;
 import com.propertyservice.property_service.error.exception.BusinessException;
+import com.propertyservice.property_service.repository.office.OfficeRepository;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
 import com.propertyservice.property_service.repository.property.*;
 import com.propertyservice.property_service.utils.DateTimeUtil;
@@ -43,6 +44,7 @@ public class PropertyService {
     private final PropertyPhotoRepository propertyPhotoRepository;
     private final PropertyRemarkRepository propertyRemarkRepository;
     private final PropertyTransactionTypeRepository propertyTransactionTypeRepository;
+    private final OfficeRepository officeRepository;
 
     @Transactional
     public void registerBuilding(BuildingRegisterRequest request) {
@@ -327,5 +329,111 @@ public class PropertyService {
         }
 
         return propertySummaryDtoList;
+    }
+
+    public PropertyDetailResponse searchPropertyDetail(Long propertyId) {
+        Property property = propertyRepository.findById(propertyId).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
+
+        // 관리비 항목 조회
+        List<String> maintenanceItemList = new ArrayList<>();
+        propertyMaintenanceItemRepository.findAllByProperty(property).forEach(maintenanceItem -> {
+            maintenanceItemList.add(maintenanceItem.getMaintenanceItem().getLabel());
+        });
+        System.out.println("\"어디?1\" = " + "어디?1");
+        // 옵션 항목 조회
+        List<String> optionItemList = new ArrayList<>();
+        propertyOptionRepository.findAllByProperty(property).forEach(optionItem -> {
+            optionItemList.add(optionItem.getOptionItemType().getLabel());
+        });
+        System.out.println("\"어디?1\" = " + "어디?2");
+
+
+        // 매물 가격 목록 조회
+        List<PropertyTransactionTypeDto> propertyTransactionTypeDtoList = new ArrayList<>();
+        propertyTransactionTypeRepository.findAllByProperty(property).forEach(propertyTransactionType -> {
+            propertyTransactionTypeDtoList.add(
+                    PropertyTransactionTypeDto.builder()
+                            .propertyTransactionType(propertyTransactionType.getTransactionType().getLabel())
+                            .price1(propertyTransactionType.getPrice1())
+                            .price2(propertyTransactionType.getPrice2())
+                            .build()
+            );
+        });
+        System.out.println("\"어디?1\" = " + "어디?3");
+
+
+        // 매물  특이사항 목록 조회
+        List<RemarkDto> propertyRemarkDtoList = searchPropertyRemarkList(propertyId);
+        System.out.println("\"어디?1\" = " + "어디?4");
+
+
+        // 매물 이미지 목록 조회
+        List<ImageDto> propertyImageDtoList = searchPropertyImageList(propertyId);
+        System.out.println("\"어디?1\" = " + "어디?5");
+
+
+
+        return PropertyDetailResponse.builder()
+                .ownerName(property.getOwnerName())
+                .ownerPhoneNumber(property.getOwnerPhoneNumber())
+                .ownerRelation(property.getOwnerRelation())
+                .roomNumber(property.getRoomNumber())
+                .propertyType(property.getPropertyType())
+                .propertyFloor(property.getPropertyFloor())
+                .roomBathCount(property.getRoomBathCount())
+                .mainRoomDirection(property.getMainRoomDirection())
+                .exclusiveArea(property.getExclusiveArea())
+                .supplyArea(property.getSupplyArea())
+                .approvalDate(property.getApprovalDate())
+                .moveInDate(property.getMoveInDate())
+                .moveOutDate(property.getMoveOutDate())
+                .availableMoveInDate(property.getAvailableMoveInDate())
+                .heatingType(property.getHeatingType().getLabel())
+                .maintenancePrice(property.getMaintenancePrice())
+                .maintenaceItemList(maintenanceItemList)
+                .optionItemList(optionItemList)
+                .propertyTransactionList(propertyTransactionTypeDtoList)
+                .propertyRemarkList(propertyRemarkDtoList)
+                .propertyImageList(propertyImageDtoList)
+                .build();
+    }
+
+    private List<ImageDto> searchPropertyImageList(Long propertyId) {
+        Property property = propertyRepository.findById(propertyId).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
+
+        List<ImageDto> propertyImageDtoList = new ArrayList<>();
+        propertyPhotoRepository.findAllByProperty(property).forEach(propertyPhoto -> {
+            propertyImageDtoList.add(
+                    ImageDto.builder()
+                            .imageId(propertyPhoto.getId())
+                            .isMain(propertyPhoto.getIsMain())
+                            .imageUrl(propertyPhoto.getPhotoUrl())
+                            .build()
+            );
+        });
+        return propertyImageDtoList;
+    }
+
+    public List<RemarkDto> searchPropertyRemarkList(Long propertyId) {
+        Property property = propertyRepository.findById(propertyId).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
+
+        List<RemarkDto> propertyRemarkDtoList = new ArrayList<>();
+        propertyRemarkRepository.findAllByProperty(property).forEach(propertyRemark -> {
+            propertyRemarkDtoList.add(
+                    RemarkDto.builder()
+                            .remarkId(propertyRemark.getId())
+                            .remark(propertyRemark.getRemark())
+                            .createdBy(Objects.requireNonNull(officeUserRepository.findById(propertyRemark.getCreatedByUserId()).orElse(null)).getName())
+                            .createdAt(propertyRemark.getCreatedDate().toLocalDate())
+                            .build()
+            );
+        });
+        return propertyRemarkDtoList;
     }
 }
