@@ -237,6 +237,10 @@ public class ClientService {
                     () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
             );
 
+            if(!showingProperty.getProperty().getPropertyStatus().equals(PropertyStatus.VACANT)){
+                throw new BusinessException(ErrorCode.INVALID_REGISTER_SHOWING_PROPERTY);
+            }
+
             showingProperty.getProperty().updatePropertyStatus(
                     PropertyStatus.CONTRACTING
             );

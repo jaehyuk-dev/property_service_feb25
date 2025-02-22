@@ -51,7 +51,6 @@ public class PropertyRepositoryImpl implements PropertyRepositoryCustom {
                 .leftJoin(propertyTransactionType).on(property.eq(propertyTransactionType.property))
                 .where(
                         building.pocOffice.id.eq(officeId),
-                        property.propertyStatus.eq(PropertyStatus.OCCUPIED).not(),
                         searchByType(condition.getSearchType(), condition.getKeyword())
                 )
                 .fetch();
