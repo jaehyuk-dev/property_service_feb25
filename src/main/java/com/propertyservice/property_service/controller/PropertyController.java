@@ -137,9 +137,9 @@ public class PropertyController {
             @ApiResponse(responseCode = "500", description = "Uncheck Error",
                     content = @Content(mediaType = "application/json")),
     })
-    @DeleteMapping("/building/remark/{remarkId}")
-    public ResponseEntity<ApiResponseDto<String>> deleteBuildingRemark(@PathVariable(value = "remarkId") Long remarkId) {
-        propertyService.deleteBuildingRemark(remarkId);
+    @DeleteMapping("/building/remark/{buildingRemarkId}")
+    public ResponseEntity<ApiResponseDto<String>> deleteBuildingRemark(@PathVariable(value = "buildingRemarkId") Long buildingRemarkId) {
+        propertyService.deleteBuildingRemark(buildingRemarkId);
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
@@ -233,10 +233,53 @@ public class PropertyController {
     }
 
     // 매물 특이사항 추가
+    @Operation(summary = "매물 특이사항 등록", description = "매물 특이사항을 등록합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PostMapping("/remark")
+    public ResponseEntity<ApiResponseDto<String>> registerPropertyRemark(@Validated @RequestBody PropertyRemarkRequest request) {
+        propertyService.registerPropertyRemark(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
+
 
     // 매물 특이사항 제거
+    @Operation(summary = "매물 특이사항 삭제", description = "매물 특이사항을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @DeleteMapping("/remark/{propertyRemarkId}")
+    public ResponseEntity<ApiResponseDto<String>> deletePropertyRemark(@PathVariable(value = "propertyRemarkId") Long propertyRemarkId) {
+        propertyService.deletePropertyRemark(propertyRemarkId);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
 
     // 매물 특이사항 목록 조회
+    @Operation(summary = "매물 상세 특이사항 조회", description = "매물 상세 특이사항을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/building/{propertyId}/remark-list")
+    public ResponseEntity<ApiResponseDto<List<RemarkDto>>> searchPropertyRemarkList(@PathVariable(value = "propertyId") Long propertyId) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertyRemarkList(propertyId)));
+    }
+
 
     // 매물 이미지 수정
 

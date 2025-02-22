@@ -461,4 +461,22 @@ public class PropertyService {
                 )
         );
     }
+
+    @Transactional
+    public void registerPropertyRemark(PropertyRemarkRequest request) {
+        Property property = propertyRepository.findById(request.getPropertyId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
+        propertyRemarkRepository.save(
+                PropertyRemark.builder()
+                        .property(property)
+                        .remark(request.getPropertyRemark())
+                        .build()
+        );
+    }
+
+    @Transactional
+    public void deletePropertyRemark(Long propertyRemarkId) {
+        propertyRemarkRepository.deleteById(propertyRemarkId);
+    }
 }
