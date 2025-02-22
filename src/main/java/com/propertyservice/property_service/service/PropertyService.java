@@ -479,4 +479,23 @@ public class PropertyService {
     public void deletePropertyRemark(Long propertyRemarkId) {
         propertyRemarkRepository.deleteById(propertyRemarkId);
     }
+
+    @Transactional
+    public void updatePropertyPhotoList(PropertyImageRequest request){
+        Property property = propertyRepository.findById(request.getPropertyId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
+
+        propertyPhotoRepository.deleteAllByProperty(property);
+
+        for(int i = 0; i < request.getPhotoUrlList().size(); i++){
+            propertyPhotoRepository.save(
+                    PropertyPhoto.builder()
+                            .property(property)
+                            .isMain(i == request.getPropertyMainPhotoIndex())
+                            .photoUrl(request.getPhotoUrlList().get(i))
+                            .build()
+            );
+        }
+    }
 }

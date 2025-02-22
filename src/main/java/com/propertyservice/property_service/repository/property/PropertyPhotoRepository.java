@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface PropertyPhotoRepository extends JpaRepository<PropertyPhoto, Long> {
     List<PropertyPhoto> findAllByProperty(Property property);
+
+    void deleteAllByProperty(Property property);
 }

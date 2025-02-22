@@ -187,7 +187,6 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertyRecapList(condition)));
     }
 
-    // 매물 목록 조회
     @Operation(summary = "매물 요약 조회", description = "매물의 요약 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
@@ -202,7 +201,6 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertySummaryList(condition)));
     }
 
-    // 매물 상세 정보 조회
     @Operation(summary = "매물 상세 정보 조회", description = "매물의 상세 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
@@ -232,7 +230,6 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
-    // 매물 특이사항 추가
     @Operation(summary = "매물 특이사항 등록", description = "매물 특이사항을 등록합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
@@ -248,8 +245,6 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
-
-    // 매물 특이사항 제거
     @Operation(summary = "매물 특이사항 삭제", description = "매물 특이사항을 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
@@ -265,7 +260,6 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
-    // 매물 특이사항 목록 조회
     @Operation(summary = "매물 상세 특이사항 조회", description = "매물 상세 특이사항을 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "success",
@@ -280,8 +274,21 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertyRemarkList(propertyId)));
     }
 
+    @Operation(summary = "매물 이미지 목록 수정", description = "매물 이미지 목록을 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PutMapping("/photo-list")
+    public ResponseEntity<ApiResponseDto<String>> updatePropertyPhotoList(@Validated @RequestBody  PropertyImageRequest request) {
+        propertyService.updatePropertyPhotoList(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
 
-    // 매물 이미지 수정
 
     // 매물 상태 변경 가능 확인
 
