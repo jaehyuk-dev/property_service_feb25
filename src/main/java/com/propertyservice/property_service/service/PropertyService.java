@@ -436,4 +436,29 @@ public class PropertyService {
         });
         return propertyRemarkDtoList;
     }
+
+    @Transactional
+    public void updatePropertyDetail(PropertyUpdateRequest request) {
+        propertyRepository.findById(request.getPropertyId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        ).updatePropertyDetail(
+                request.getOwnerName(),
+                request.getOwnerPhoneNumber(),
+                request.getOwnerRelation(),
+                request.getRoomNumber(),
+                request.getPropertyType(),
+                request.getPropertyFloor(),
+                request.getRoomBathCount(),
+                request.getMainRoomDirection(),
+                request.getExclusiveArea(),
+                request.getSupplyArea(),
+                DateTimeUtil.parseYYYYMMDD(request.getApprovalDate()).orElseThrow(
+                        () -> new BusinessException(ErrorCode.INVALID_DATE_FORMAT)
+                ),
+                HeatingType.fromValue(request.getHeatingTypeCode()),
+                DateTimeUtil.parseYYYYMMDD(request.getAvailableMoveInDate()).orElseThrow(
+                        () -> new BusinessException(ErrorCode.INVALID_DATE_FORMAT)
+                )
+        );
+    }
 }

@@ -119,4 +119,21 @@ public class Property {
         this.availableMoveInDate = availableMoveInDate;
         this.propertyStatus = propertyStatus;
     }
+
+
+    public void updatePropertyDetail(String ownerName, String ownerPhoneNumber, String ownerRelation, String roomNumber, String propertyType, String propertyFloor, String roomBathCount, String mainRoomDirection, Double exclusiveArea, Double supplyArea, LocalDate approvalDate, HeatingType heatingType, LocalDate availableMoveInDate) {
+        this.ownerName = ownerName;
+        this.ownerPhoneNumber = ownerPhoneNumber;
+        this.ownerRelation = ownerRelation;
+        this.roomNumber = roomNumber;
+        this.propertyType = propertyType;
+        this.propertyFloor = propertyFloor;
+        this.roomBathCount = roomBathCount;
+        this.mainRoomDirection = mainRoomDirection;
+        this.exclusiveArea = exclusiveArea;
+        this.supplyArea = supplyArea;
+        this.approvalDate = approvalDate;
+        this.heatingType = heatingType;
+        this.availableMoveInDate = availableMoveInDate;
+    }
 }

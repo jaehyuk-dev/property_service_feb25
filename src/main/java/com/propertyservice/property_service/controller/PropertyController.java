@@ -216,9 +216,21 @@ public class PropertyController {
     public ResponseEntity<ApiResponseDto<PropertyDetailResponse>> searchPropertySummaryList(@PathVariable(value = "propertyId") Long propertyId) {
         return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.searchPropertyDetail(propertyId)));
     }
-
-
-    // 매물 정보 수정
+    
+    @Operation(summary = "매물 정보 수정", description = "매물 정보를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PutMapping("/")
+    public ResponseEntity<ApiResponseDto<String>> updatePropertyDetail(@Validated @RequestBody PropertyUpdateRequest request) {
+        propertyService.updatePropertyDetail(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
 
     // 매물 특이사항 추가
 
