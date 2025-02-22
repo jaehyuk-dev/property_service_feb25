@@ -289,9 +289,34 @@ public class PropertyController {
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
-
-    // 매물 상태 변경 가능 확인
+    @Operation(summary = "매물 상태 변경 가능 여부 확인.", description = "매물의 상태가 \"거주 중\" 일때 매출 장부에 등록되어있는 매물인지 확인 함")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/{propertyId}/status")
+    public ResponseEntity<ApiResponseDto<Boolean>> canUpdatePropertyStatus(@PathVariable(value = "propertyId") Long propertyId) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(propertyService.canUpdatePropertyStatus(propertyId)));
+    }
 
     // 매물 상태 변경
+    @Operation(summary = "매물 상태 수정", description = "매물의 상태를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @PutMapping("/status")
+    public ResponseEntity<ApiResponseDto<String>> updatePropertyStatus(@Validated @RequestBody  PropertyStatusUpdateRequest request) {
+        propertyService.updatePropertyStatus(request);
+        return ResponseEntity.ok(new SuccessResponseDto<>("success"));
+    }
 
 }

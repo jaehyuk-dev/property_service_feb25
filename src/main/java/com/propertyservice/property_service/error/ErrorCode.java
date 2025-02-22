@@ -30,6 +30,7 @@ public enum ErrorCode {
     INVALID_IMAGE_FILE(HttpStatus.BAD_REQUEST, "400", "허용되지 않은 이미지 파일 형식입니다"),
 
 
+    INVALID_REGISTER_SHOWING_PROPERTY(HttpStatus.BAD_REQUEST, "40001", "공실인 매물만 등록할 수 있습니다."),
 
 
     // 공통 에러

@@ -1,8 +1,10 @@
 package com.propertyservice.property_service.service;
 
+import com.propertyservice.property_service.domain.client.enums.ClientStatus;
 import com.propertyservice.property_service.domain.common.eums.TransactionType;
 import com.propertyservice.property_service.domain.property.*;
 import com.propertyservice.property_service.domain.property.enums.*;
+import com.propertyservice.property_service.domain.revenue.Revenue;
 import com.propertyservice.property_service.dto.common.ImageDto;
 import com.propertyservice.property_service.dto.common.RemarkDto;
 import com.propertyservice.property_service.dto.common.SearchCondition;
@@ -14,6 +16,7 @@ import com.propertyservice.property_service.error.exception.BusinessException;
 import com.propertyservice.property_service.repository.office.OfficeRepository;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
 import com.propertyservice.property_service.repository.property.*;
+import com.propertyservice.property_service.repository.revenue.RevenueRepository;
 import com.propertyservice.property_service.utils.DateTimeUtil;
 import com.propertyservice.property_service.utils.PriceFormatter;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +48,7 @@ public class PropertyService {
     private final PropertyRemarkRepository propertyRemarkRepository;
     private final PropertyTransactionTypeRepository propertyTransactionTypeRepository;
     private final OfficeRepository officeRepository;
+    private final RevenueRepository revenueRepository;
 
     @Transactional
     public void registerBuilding(BuildingRegisterRequest request) {
@@ -495,6 +499,93 @@ public class PropertyService {
                             .isMain(i == request.getPropertyMainPhotoIndex())
                             .photoUrl(request.getPhotoUrlList().get(i))
                             .build()
+            );
+        }
+    }
+
+    public boolean canUpdatePropertyStatus(Long propertyId) {
+        Property property = propertyRepository.findById(propertyId).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
+
+        List<Revenue> allByProperty = revenueRepository.findAllByProperty(property);
+
+        return allByProperty.isEmpty();
+    }
+
+    /**
+     * 매물의 상태는 공실, 계약 중, 거주 중..
+     * so
+     * 공실 > 계약 중 : 그냥 ㄱㄱ
+     * 공실 > 거주 중 : 입주일, 퇴실일, 입주 가능일 설정
+     * 계약중 > 거주 중 : 입주일, 퇴실일, 입주 가능일 설정
+     * 계약중 > 공실 : 그냥 ㄱㄱ
+     * 거주 중 > 계약 중 : 그냥 입주, 퇴실 입주 가능을 을 빼야함.
+     * 거주 중 > 공실 : 그냥 입주, 퇴실 입주 가능을 을 빼야함.
+     * @param request
+     */
+    @Transactional
+    public void updatePropertyStatus(PropertyStatusUpdateRequest request) {
+        Property property = propertyRepository.findById(request.getPropertyId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
+        );
+
+        if(property.getPropertyStatus().equals(PropertyStatus.VACANT) &&
+                PropertyStatus.fromValue(request.getNewPropertyStatusCode()).equals(PropertyStatus.CONTRACTING)) {
+            // 공실 > 계약 중
+            property.setPropertyStatus(PropertyStatus.CONTRACTING);
+        } else if(property.getPropertyStatus().equals(PropertyStatus.VACANT) &&
+                PropertyStatus.fromValue(request.getNewPropertyStatusCode()).equals(PropertyStatus.OCCUPIED)) {
+            // 공실 > 거주 중
+            property.updatePropertyStatusContractCompleted(
+                    DateTimeUtil.parseYYYYMMDD(request.getMoveInDate()).orElseThrow(
+                            () -> new BusinessException(ErrorCode.INVALID_DATA_FORMAT)
+                    ),
+                    DateTimeUtil.parseYYYYMMDD(request.getMoveOutDate()).orElseThrow(
+                            () -> new BusinessException(ErrorCode.INVALID_DATA_FORMAT)
+                    ),
+                    DateTimeUtil.parseYYYYMMDD(request.getMoveOutDate()).orElseThrow(
+                            () -> new BusinessException(ErrorCode.INVALID_DATA_FORMAT)
+                    ).plusDays(1),
+                    PropertyStatus.OCCUPIED
+            );
+        } else if(property.getPropertyStatus().equals(PropertyStatus.CONTRACTING) &&
+                PropertyStatus.fromValue(request.getNewPropertyStatusCode()).equals(PropertyStatus.VACANT)) {
+            // 계약 중 > 공실
+            property.setPropertyStatus(PropertyStatus.VACANT);
+        } else if(property.getPropertyStatus().equals(PropertyStatus.CONTRACTING) &&
+                PropertyStatus.fromValue(request.getNewPropertyStatusCode()).equals(PropertyStatus.OCCUPIED)) {
+            // 계약 중 > 거주 중
+            // 공실 > 거주 중
+            property.updatePropertyStatusContractCompleted(
+                    DateTimeUtil.parseYYYYMMDD(request.getMoveInDate()).orElseThrow(
+                            () -> new BusinessException(ErrorCode.INVALID_DATA_FORMAT)
+                    ),
+                    DateTimeUtil.parseYYYYMMDD(request.getMoveOutDate()).orElseThrow(
+                            () -> new BusinessException(ErrorCode.INVALID_DATA_FORMAT)
+                    ),
+                    DateTimeUtil.parseYYYYMMDD(request.getMoveOutDate()).orElseThrow(
+                            () -> new BusinessException(ErrorCode.INVALID_DATA_FORMAT)
+                    ).plusDays(1),
+                    PropertyStatus.OCCUPIED
+            );
+        } else if(property.getPropertyStatus().equals(PropertyStatus.OCCUPIED) &&
+                PropertyStatus.fromValue(request.getNewPropertyStatusCode()).equals(PropertyStatus.VACANT)) {
+            // 거주 중 > 공실
+            property.updatePropertyStatusContractCompleted(
+                    null,
+                    null,
+                    null,
+                    PropertyStatus.VACANT
+            );
+        } else if(property.getPropertyStatus().equals(PropertyStatus.OCCUPIED) &&
+                PropertyStatus.fromValue(request.getNewPropertyStatusCode()).equals(PropertyStatus.CONTRACTING)) {
+            // 거주 중 > 계약 중
+            property.updatePropertyStatusContractCompleted(
+                    null,
+                    null,
+                    null,
+                    PropertyStatus.CONTRACTING
             );
         }
     }
