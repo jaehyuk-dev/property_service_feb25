@@ -32,6 +32,10 @@ public enum ErrorCode {
 
     INVALID_REGISTER_SHOWING_PROPERTY(HttpStatus.BAD_REQUEST, "40001", "공실인 매물만 등록할 수 있습니다."),
 
+    INVALID_TRANSACTION_TYPE(HttpStatus.BAD_REQUEST, "400", "거래 유형이 알맞지 않습니다."),
+    REVENUE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "매출을 찾을 수 없습니다."),
+
+
 
     // 공통 에러
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "40001", "잘못된 요청입니다."),

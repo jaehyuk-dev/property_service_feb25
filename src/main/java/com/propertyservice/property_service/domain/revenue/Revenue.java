@@ -1,7 +1,8 @@
 package com.propertyservice.property_service.domain.revenue;
 
 import com.propertyservice.property_service.domain.client.Client;
-import com.propertyservice.property_service.domain.client.ShowingProperty;
+import com.propertyservice.property_service.domain.common.BaseEntity;
+import com.propertyservice.property_service.domain.office.Office;
 import com.propertyservice.property_service.domain.property.Property;
 import com.propertyservice.property_service.domain.property.PropertyTransactionType;
 import jakarta.persistence.*;
@@ -17,11 +18,15 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @Table(name = "revenues")
-public class Revenue {
+public class Revenue extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "revenue_id", updatable = false, nullable = false)
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "poc_office_id", nullable = false)
+    private Office pocOffice;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
