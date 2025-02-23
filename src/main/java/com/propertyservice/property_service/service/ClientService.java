@@ -151,6 +151,7 @@ public class ClientService {
                             .scheduleId(schedule.getId())
                             .clientName(schedule.getClient().getName())
                             .picUserName(schedule.getClient().getPicUser().getName())
+                            .scheduleDate(schedule.getDate())
                             .scheduleType(schedule.getScheduleType().getLabel())
                             .scheduleRemark(schedule.getRemark())
                             .isCompleted(schedule.isCompleted())
