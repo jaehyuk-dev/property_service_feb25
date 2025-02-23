@@ -3,10 +3,12 @@ package com.propertyservice.property_service.controller;
 import com.propertyservice.property_service.dto.common.ApiResponseDto;
 import com.propertyservice.property_service.dto.common.SuccessResponseDto;
 import com.propertyservice.property_service.dto.schedule.ScheduleCompleteRequest;
+import com.propertyservice.property_service.dto.schedule.ScheduleDto;
 import com.propertyservice.property_service.dto.schedule.ScheduleRegisterRequest;
 import com.propertyservice.property_service.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -72,5 +76,22 @@ public class ScheduleController {
 
     // 한 달 내 하루당 일정 목록 갯수 조회
 
-    // 선택 일 일정 목록 조회
+
+    @Operation(summary = "선택 일 일정 조회", description = "선택한 날짜의 일정 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/")
+    public ResponseEntity<ApiResponseDto<List<ScheduleDto>>> searchSelectedDateSchedule(
+            @RequestParam("selectedDate")
+            @Schema(description = "선택일", example = "20250101")
+            String selectedDate
+    ) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(scheduleService.searchSelectedDateSchedule(selectedDate)));
+    }
 }

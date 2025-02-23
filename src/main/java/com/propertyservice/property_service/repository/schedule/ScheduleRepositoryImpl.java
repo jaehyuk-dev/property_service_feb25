@@ -1,0 +1,64 @@
+package com.propertyservice.property_service.repository.schedule;
+
+import com.propertyservice.property_service.domain.common.eums.TransactionType;
+import com.propertyservice.property_service.domain.schedule.enums.ScheduleType;
+import com.propertyservice.property_service.dto.schedule.QScheduleDto;
+import com.propertyservice.property_service.dto.schedule.ScheduleDto;
+import com.propertyservice.property_service.error.ErrorCode;
+import com.propertyservice.property_service.error.exception.BusinessException;
+import com.propertyservice.property_service.utils.DateTimeUtil;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.StringExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static com.propertyservice.property_service.domain.client.QClient.client;
+import static com.propertyservice.property_service.domain.office.QOfficeUser.officeUser;
+import static com.propertyservice.property_service.domain.schedule.QSchedule.schedule;
+
+@Repository
+@RequiredArgsConstructor
+public class ScheduleRepositoryImpl implements ScheduleRepositoryCustom {
+
+    private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<ScheduleDto> searchScheduleList(String selectedDate, Long officeId) {
+        return queryFactory
+                .select(
+                        new QScheduleDto(
+                                schedule.id,
+                                officeUser.name,
+                                client.name,
+                                schedule.date,
+                                getScheduleTypeLabel(schedule.scheduleType),
+                                schedule.remark,
+                                schedule.isCompleted
+                        )
+                )
+                .from(schedule)
+                .leftJoin(client).on(client.id.eq(schedule.client.id))
+                .leftJoin(officeUser).on(officeUser.id.eq(client.id))
+                .where(
+                        officeUser.office.id.eq(officeId),
+                        schedule.date.between(DateTimeUtil.parseYYYYMMDD(selectedDate).orElseThrow(
+                                () -> new BusinessException(ErrorCode.INVALID_DATE_FORMAT)
+                        ).atStartOfDay(), DateTimeUtil.parseYYYYMMDD(selectedDate).orElseThrow(
+                                () -> new BusinessException(ErrorCode.INVALID_DATE_FORMAT)
+                        ).plusDays(1).atStartOfDay())
+                )
+                .fetch();
+    }
+
+    private StringExpression getScheduleTypeLabel(EnumPath<ScheduleType> scheduleType) {
+        return new CaseBuilder()
+                .when(scheduleType.eq(ScheduleType.CONSULTING)).then(ScheduleType.CONSULTING.getLabel())
+                .when(scheduleType.eq(ScheduleType.CONTRACT_SCHEDULED)).then(ScheduleType.CONTRACT_SCHEDULED.getLabel())
+                .when(scheduleType.eq(ScheduleType.CONTRACT_COMPLETED)).then(ScheduleType.CONTRACT_COMPLETED.getLabel())
+                .otherwise("알 수 없음"); // ✅ 예외 처리
+    }
+}

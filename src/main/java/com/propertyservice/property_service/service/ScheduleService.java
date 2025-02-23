@@ -4,6 +4,7 @@ import com.propertyservice.property_service.domain.client.Client;
 import com.propertyservice.property_service.domain.schedule.Schedule;
 import com.propertyservice.property_service.domain.schedule.enums.ScheduleType;
 import com.propertyservice.property_service.dto.schedule.ScheduleCompleteRequest;
+import com.propertyservice.property_service.dto.schedule.ScheduleDto;
 import com.propertyservice.property_service.dto.schedule.ScheduleRegisterRequest;
 import com.propertyservice.property_service.error.ErrorCode;
 import com.propertyservice.property_service.error.exception.BusinessException;
@@ -14,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -54,5 +57,9 @@ public class ScheduleService {
         scheduleRepository.findById(request.getScheduleId()).orElseThrow(
                 () -> new BusinessException(ErrorCode.SCHEDULE_NOT_FOUND)
         ).updateScheduleCompleted(request.isComplete());
+    }
+
+    public List<ScheduleDto> searchSelectedDateSchedule(String selectedDay) {
+        return scheduleRepository.searchScheduleList(selectedDay, officeService.getCurrentUserEntity().getOffice().getId());
     }
 }
