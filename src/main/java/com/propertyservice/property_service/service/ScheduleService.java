@@ -5,6 +5,7 @@ import com.propertyservice.property_service.domain.schedule.Schedule;
 import com.propertyservice.property_service.domain.schedule.enums.ScheduleType;
 import com.propertyservice.property_service.dto.schedule.ScheduleCompleteRequest;
 import com.propertyservice.property_service.dto.schedule.ScheduleDto;
+import com.propertyservice.property_service.dto.schedule.ScheduleEventDto;
 import com.propertyservice.property_service.dto.schedule.ScheduleRegisterRequest;
 import com.propertyservice.property_service.error.ErrorCode;
 import com.propertyservice.property_service.error.exception.BusinessException;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.YearMonth;
 import java.util.List;
 
 @Slf4j
@@ -61,5 +63,12 @@ public class ScheduleService {
 
     public List<ScheduleDto> searchSelectedDateSchedule(String selectedDay) {
         return scheduleRepository.searchScheduleList(selectedDay, officeService.getCurrentUserEntity().getOffice().getId());
+    }
+
+    public List<ScheduleEventDto> getEventsByMonth(String yearMonth) {
+        return scheduleRepository.searchEventsByMonth(
+                YearMonth.parse(yearMonth, java.time.format.DateTimeFormatter.ofPattern("yyyyMM")),
+                officeService.getCurrentUserEntity().getOffice().getId()
+        );
     }
 }

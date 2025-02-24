@@ -4,6 +4,7 @@ import com.propertyservice.property_service.dto.common.ApiResponseDto;
 import com.propertyservice.property_service.dto.common.SuccessResponseDto;
 import com.propertyservice.property_service.dto.schedule.ScheduleCompleteRequest;
 import com.propertyservice.property_service.dto.schedule.ScheduleDto;
+import com.propertyservice.property_service.dto.schedule.ScheduleEventDto;
 import com.propertyservice.property_service.dto.schedule.ScheduleRegisterRequest;
 import com.propertyservice.property_service.service.ScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,10 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.YearMonth;
 import java.util.List;
 
 @Slf4j
@@ -74,8 +77,24 @@ public class ScheduleController {
         return ResponseEntity.ok(new SuccessResponseDto<>("success"));
     }
 
-    // 한 달 내 하루당 일정 목록 갯수 조회
-
+    @Operation(summary = "한 달 내 하루 일정 유형 조회", description = "한 달 내 하루의 일정 유형을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "success",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "400", description = "Checked Error",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "500", description = "Uncheck Error",
+                    content = @Content(mediaType = "application/json")),
+    })
+    @GetMapping("/event")
+    public ResponseEntity<ApiResponseDto<List<ScheduleEventDto>>> getMonthlyEvents(
+            @RequestParam("yearMonth")
+            @DateTimeFormat(pattern = "yyyy-MM")
+            @Schema(description = "년월", example = "202501")
+            String yearMonth
+    ) {
+        return ResponseEntity.ok(new SuccessResponseDto<>(scheduleService.getEventsByMonth(yearMonth)));
+    }
 
     @Operation(summary = "선택 일 일정 조회", description = "선택한 날짜의 일정 목록을 조회합니다.")
     @ApiResponses(value = {
