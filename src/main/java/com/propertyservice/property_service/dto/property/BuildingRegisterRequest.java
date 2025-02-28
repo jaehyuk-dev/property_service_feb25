@@ -48,8 +48,6 @@ public class BuildingRegisterRequest {
     @NotBlank
     @Schema(description = "건물 출입문 방향", example = "대로변쪽")
     private String buildingMainDoorDirection;
-    @NotNull
-    @NotBlank
     @Schema(description = "건물 공동 현관문 비밀번호", example = "없음")
     private String buildingCommonPassword;
     @NotNull

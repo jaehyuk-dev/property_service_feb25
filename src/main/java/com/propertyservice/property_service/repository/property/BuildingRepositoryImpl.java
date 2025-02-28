@@ -1,7 +1,12 @@
 package com.propertyservice.property_service.repository.property;
 
+import com.propertyservice.property_service.domain.common.eums.TransactionType;
+import com.propertyservice.property_service.domain.property.enums.BuildingType;
 import com.propertyservice.property_service.dto.property.BuildingSummaryDto;
 import com.propertyservice.property_service.dto.property.QBuildingSummaryDto;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.EnumPath;
+import com.querydsl.core.types.dsl.StringExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -28,6 +33,7 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
                                         .prepend("(")           // "(" + zoneCode
                                         .concat(") ")          // + ") "
                                         .concat(building.address),  // + building.address
+                                getTransactionTypeLabel(building.buildingType),
                                 buildingPhoto.photoUrl
                         )
                 )
@@ -41,4 +47,12 @@ public class BuildingRepositoryImpl implements BuildingRepositoryCustom {
                 )
                 .fetch();
     }
+
+    private StringExpression getTransactionTypeLabel(EnumPath<BuildingType> buildingType) {
+        return new CaseBuilder()
+                .when(buildingType.eq(BuildingType.RESIDENTIAL)).then(BuildingType.RESIDENTIAL.getLabel())
+                .when(buildingType.eq(BuildingType.NON_RESIDENTIAL)).then(BuildingType.NON_RESIDENTIAL.getLabel())
+                .otherwise("알 수 없음"); // ✅ 예외 처리
+    }
+
 }

@@ -10,11 +10,14 @@ public class BuildingSummaryDto {
     private String buildingAddress;
     private String buildingType;
 
+    private String buildingMainPhotoUrl;
+
     @QueryProjection
-    public BuildingSummaryDto(long buildingId, String buildingName, String buildingAddress, String buildingType) {
+    public BuildingSummaryDto(long buildingId, String buildingName, String buildingAddress, String buildingType, String buildingMainPhotoUrl) {
         this.buildingId = buildingId;
         this.buildingName = buildingName;
         this.buildingAddress = buildingAddress;
         this.buildingType = buildingType;
+        this.buildingMainPhotoUrl = buildingMainPhotoUrl;
     }
 }
