@@ -22,6 +22,12 @@ spring:
       max-file-size: 5MB # 파일 업로드 요청 시 하나의 파일 크기 5MB로 제한
       max-request-size: 25MB # 파일 업로드 요청 시 모든 파일의 크기의합 25MB로 제한
       enabled: true
+  web:
+    resources:
+      static-locations: file:F:/project/property_service_feb25/src/main/resources/static/
+  mvc:
+    static-path-pattern: /**
+
 
 jwt:
   header: Authorization
