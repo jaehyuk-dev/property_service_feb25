@@ -404,7 +404,7 @@ public class PropertyService {
                 .build();
     }
 
-    private List<ImageDto> searchPropertyImageList(Long propertyId) {
+    public List<ImageDto> searchPropertyImageList(Long propertyId) {
         Property property = propertyRepository.findById(propertyId).orElseThrow(
                 () -> new BusinessException(ErrorCode.PROPERTY_NOT_FOUND)
         );
