@@ -345,13 +345,11 @@ public class PropertyService {
         propertyMaintenanceItemRepository.findAllByProperty(property).forEach(maintenanceItem -> {
             maintenanceItemList.add(maintenanceItem.getMaintenanceItem().getLabel());
         });
-        System.out.println("\"어디?1\" = " + "어디?1");
         // 옵션 항목 조회
         List<String> optionItemList = new ArrayList<>();
         propertyOptionRepository.findAllByProperty(property).forEach(optionItem -> {
             optionItemList.add(optionItem.getOptionItemType().getLabel());
         });
-        System.out.println("\"어디?1\" = " + "어디?2");
 
 
         // 매물 가격 목록 조회
@@ -365,21 +363,21 @@ public class PropertyService {
                             .build()
             );
         });
-        System.out.println("\"어디?1\" = " + "어디?3");
 
 
         // 매물  특이사항 목록 조회
         List<RemarkDto> propertyRemarkDtoList = searchPropertyRemarkList(propertyId);
-        System.out.println("\"어디?1\" = " + "어디?4");
 
 
         // 매물 이미지 목록 조회
         List<ImageDto> propertyImageDtoList = searchPropertyImageList(propertyId);
-        System.out.println("\"어디?1\" = " + "어디?5");
-
 
 
         return PropertyDetailResponse.builder()
+                .propertyId(property.getId())
+                .picUser(property.getPicUser().getName())
+                .propertyStatus(property.getPropertyStatus().getLabel())
+                .buildingId(property.getBuilding().getId())
                 .ownerName(property.getOwnerName())
                 .ownerPhoneNumber(property.getOwnerPhoneNumber())
                 .ownerRelation(property.getOwnerRelation())

@@ -16,6 +16,8 @@ public class PropertyDetailResponse {
     private String picUser;
     private String propertyStatus;
 
+    private Long buildingId;
+
     private String ownerName;
     private String ownerPhoneNumber;
     private String ownerRelation;
@@ -47,8 +49,37 @@ public class PropertyDetailResponse {
 
     private List<ImageDto> propertyImageList;
 
+//    @Builder
+//    public PropertyDetailResponse(String ownerName, String ownerPhoneNumber, String ownerRelation, String roomNumber, String propertyType, String propertyFloor, String roomBathCount, String mainRoomDirection, Double exclusiveArea, Double supplyArea, LocalDate approvalDate, LocalDate moveInDate, LocalDate moveOutDate, LocalDate availableMoveInDate, String heatingType, BigDecimal maintenancePrice, List<String> maintenaceItemList, List<String> optionItemList, List<PropertyTransactionTypeDto> propertyTransactionList, List<RemarkDto> propertyRemarkList, List<ImageDto> propertyImageList) {
+//        this.ownerName = ownerName;
+//        this.ownerPhoneNumber = ownerPhoneNumber;
+//        this.ownerRelation = ownerRelation;
+//        this.roomNumber = roomNumber;
+//        this.propertyType = propertyType;
+//        this.propertyFloor = propertyFloor;
+//        this.roomBathCount = roomBathCount;
+//        this.mainRoomDirection = mainRoomDirection;
+//        this.exclusiveArea = exclusiveArea;
+//        this.supplyArea = supplyArea;
+//        this.approvalDate = approvalDate;
+//        this.moveInDate = moveInDate;
+//        this.moveOutDate = moveOutDate;
+//        this.availableMoveInDate = availableMoveInDate;
+//        this.heatingType = heatingType;
+//        this.maintenancePrice = maintenancePrice;
+//        this.maintenaceItemList = maintenaceItemList;
+//        this.optionItemList = optionItemList;
+//        this.propertyTransactionList = propertyTransactionList;
+//        this.propertyRemarkList = propertyRemarkList;
+//        this.propertyImageList = propertyImageList;
+//    }
+
     @Builder
-    public PropertyDetailResponse(String ownerName, String ownerPhoneNumber, String ownerRelation, String roomNumber, String propertyType, String propertyFloor, String roomBathCount, String mainRoomDirection, Double exclusiveArea, Double supplyArea, LocalDate approvalDate, LocalDate moveInDate, LocalDate moveOutDate, LocalDate availableMoveInDate, String heatingType, BigDecimal maintenancePrice, List<String> maintenaceItemList, List<String> optionItemList, List<PropertyTransactionTypeDto> propertyTransactionList, List<RemarkDto> propertyRemarkList, List<ImageDto> propertyImageList) {
+    public PropertyDetailResponse(Long propertyId, String picUser, String propertyStatus, Long buildingId, String ownerName, String ownerPhoneNumber, String ownerRelation, String roomNumber, String propertyType, String propertyFloor, String roomBathCount, String mainRoomDirection, Double exclusiveArea, Double supplyArea, LocalDate approvalDate, LocalDate moveInDate, LocalDate moveOutDate, LocalDate availableMoveInDate, String heatingType, BigDecimal maintenancePrice, List<String> maintenaceItemList, List<String> optionItemList, List<PropertyTransactionTypeDto> propertyTransactionList, List<RemarkDto> propertyRemarkList, List<ImageDto> propertyImageList) {
+        this.propertyId = propertyId;
+        this.picUser = picUser;
+        this.propertyStatus = propertyStatus;
+        this.buildingId = buildingId;
         this.ownerName = ownerName;
         this.ownerPhoneNumber = ownerPhoneNumber;
         this.ownerRelation = ownerRelation;
