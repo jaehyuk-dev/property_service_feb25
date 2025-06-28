@@ -10,6 +10,7 @@ import com.propertyservice.property_service.repository.office.OfficeRepository;
 import com.propertyservice.property_service.repository.office.OfficeUserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 public class OfficeService {
     private final OfficeRepository officeRepository;
     private final OfficeUserRepository officeUserRepository;
+    private final PasswordEncoder passwordEncoder;  // 追加
 
     /**
      * 중개업소 등록 및 중개업소 코드 발급
@@ -196,10 +198,9 @@ public class OfficeService {
                 .office(office)
                 .name(request.getName())
                 .email(request.getEmail())
-//                .passwordHash(bCryptPasswordEncoder.encode(request.getPassword()))
-                .passwordHash(request.getPassword())
+                .passwordHash(passwordEncoder.encode(request.getPassword())) // 수정: BCrypt로 암호화
                 .phoneNumber(request.getPhoneNumber())
-                .role(officeUserRepository.existsByOffice(office) ? Role.ADMIN : Role.USER) // 첫 가입이면 대표
+                .role(officeUserRepository.existsByOffice(office) ? Role.USER : Role.ADMIN) // 수정: 첫 가입이면 ADMIN
                 .build();
 
         officeUserRepository.save(user);

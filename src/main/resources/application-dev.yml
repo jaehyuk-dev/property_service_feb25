@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://158.247.251.146:5432/property_service_dev
+    url: jdbc:postgresql://localhost:5432/property_service_dev
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -24,15 +24,15 @@ spring:
       enabled: true
   web:
     resources:
-      static-locations: file:F:/project/property_service_feb25/src/main/resources/static/
+      static-locations: file:/Users/jaehyuk/project/property_service_feb25/src/main/resources/static
   mvc:
     static-path-pattern: /**
 
 
 jwt:
-  header: Authorization
   secret: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJwYWlrYmVhbkBnbWFpbC5jb20iLCJuYW1lIjoiTGVlIEphZXl1ayIsImlhdCI6MTUxNjIzOTAyMn0.pclgCT5sT9cJAv8F1yV2FhJXMcPrS8LCeaRzM41la9U
-  expiration: 36000
+  access-token-validity-in-seconds: 86400
+  header: Authorization
   issuer: property-service
 
 logging:
