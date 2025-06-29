@@ -288,13 +288,13 @@ Property Service는 위의 문제점들을 다음과 같이 해결합니다:
         ◇ ─── 1:N
         │
     [Client] ────────◇──────── [ShowingProperty] ────────◇──────── [Property]
-     (고객)                                            (매물)
-        │                                                              │
-        │                                                     │ 
+     (고객)                       <보여줄 매물>                         (매물)
+        │                                                               │
+        │                                                               │ 
         ◇ ─── 1:N                                                      ◇ ─── N:1
-        │                                                              │
-   [Schedule]                                                     [Building]
-     (일정)                                                        (빌딩)
+        │                                                               │
+   [Schedule]                                                        [Building]
+     (일정)                                                            (빌딩)
 
 ```
 
