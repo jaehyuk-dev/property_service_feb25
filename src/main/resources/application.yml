@@ -2,4 +2,5 @@ spring:
   application:
     name: property-service
   profiles:
-    active: dev
+    active: local
+    include: secret

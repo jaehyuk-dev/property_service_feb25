@@ -13,6 +13,7 @@ public enum ErrorCode {
     INVALID_USER_CREDENTIALS(HttpStatus.UNAUTHORIZED, "401", "사용자 인증 정보가 올바르지 않습니다."),
     SAME_PASSWORD_NOT_ALLOWED(HttpStatus.UNAUTHORIZED, "400", "이전과 같은 비밀번호는 사용할 수 없습니다."),
     WEAK_PASSWORD(HttpStatus.UNAUTHORIZED, "400", "비밀번호는 최소 8자 이상, 숫자 포함, 특수문자 포함해야합니다."),
+    PASSWORD_MISMATCH(HttpStatus.BAD_REQUEST, "40006", "비밀번호가 일치하지 않습니다."), // 추가
 
     CLIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "고객을 찾을 수 없습니다."),
     SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "일정을 찾을 수 없습니다."),
@@ -29,13 +30,10 @@ public enum ErrorCode {
     INVALID_NO_IMAGE_NAME(HttpStatus.BAD_REQUEST, "400", "파일 이름이 없습니다."),
     INVALID_IMAGE_FILE(HttpStatus.BAD_REQUEST, "400", "허용되지 않은 이미지 파일 형식입니다"),
 
-
     INVALID_REGISTER_SHOWING_PROPERTY(HttpStatus.BAD_REQUEST, "40001", "공실인 매물만 등록할 수 있습니다."),
 
     INVALID_TRANSACTION_TYPE(HttpStatus.BAD_REQUEST, "400", "거래 유형이 알맞지 않습니다."),
     REVENUE_NOT_FOUND(HttpStatus.NOT_FOUND, "404", "매출을 찾을 수 없습니다."),
-
-
 
     // 공통 에러
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "40001", "잘못된 요청입니다."),

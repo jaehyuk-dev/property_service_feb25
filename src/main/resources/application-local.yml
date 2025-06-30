@@ -1,9 +1,9 @@
-# application-dev.yml (이 파일은 깃허브에 올릴 수 있음)
+# application-local.yml (이 파일은 깃허브에 올릴 수 있음)
 spring:
   datasource:
-    url: ${secret.dev.datasource.url}
-    username: ${secret.dev.datasource.username}
-    password: ${secret.dev.datasource.password}
+    url: ${secret.local.datasource.url}
+    username: ${secret.local.datasource.username}
+    password: ${secret.local.datasource.password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -22,16 +22,16 @@ spring:
       max-file-size: 5MB # 파일 업로드 요청 시 하나의 파일 크기 5MB로 제한
       max-request-size: 25MB # 파일 업로드 요청 시 모든 파일의 크기의합 25MB로 제한
       enabled: true
-  
+
   web:
     resources:
-      static-locations: file:${secret.dev.file.upload-path}
-  
+      static-locations: file:${secret.local.file.upload-path}
+
   mvc:
     static-path-pattern: /**
 
 jwt:
-  secret: ${secret.dev.jwt.secret-key}
+  secret: ${secret.local.jwt.secret-key}
   access-token-validity-in-seconds: 86400
   header: Authorization
   issuer: property-service

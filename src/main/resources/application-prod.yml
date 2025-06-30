@@ -1,24 +1,51 @@
+# application-prod.yml (이 파일은 깃허브에 올릴 수 있음)
 spring:
   datasource:
-    url: jdbc:postgresql://prod-db-host:5432/prod_db
-    username: prod_user
-    password: prod_password
+    url: ${secret.prod.datasource.url}
+    username: ${secret.prod.datasource.username}
+    password: ${secret.prod.datasource.password}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: validate  # 운영 환경에서는 validate 사용
-    show-sql: false
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        format_sql: false
+        format_sql: true
+      show-sql: true # 콘솔창에 sql 출력
+      open-in-view: false # 영속성 컨텍스트의 생존 범위를 서비스 계층으로 한정
 
   servlet:
     multipart:
-      max-file-size: 10MB # 파일 업로드 요청 시 하나의 파일 크기 10MB로 제한
-      max-request-size: 100MB # 파일 업로드 요청 시 모든 파일의 크기의합 100MB로 제한
+      max-file-size: 5MB # 파일 업로드 요청 시 하나의 파일 크기 5MB로 제한
+      max-request-size: 25MB # 파일 업로드 요청 시 모든 파일의 크기의합 25MB로 제한
+      enabled: true
+
+  web:
+    resources:
+      static-locations: file:${secret.prod.file.upload-path}
+
+  mvc:
+    static-path-pattern: /**
+
+jwt:
+  secret: ${secret.prod.jwt.secret-key}
+  access-token-validity-in-seconds: 86400
+  header: Authorization
+  issuer: property-service
 
 logging:
   level:
-    org.hibernate.type: info # 콘솔창에 조건에 바인딩되는 값 및 조회결과 출
+    root: INFO # 기본 로깅 레벨을 INFO로 설정
+    org.springframework.security: DEBUG # Spring Security의 인증 관련 로그 출력
+    org.hibernate.SQL: DEBUG # Hibernate SQL 실행 로그 활성화
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE # SQL 바인딩 값까지 출력
+
+springdoc:
+  api-docs:
+    enabled: true   # API 문서 활성화
+  swagger-ui:
+    enabled: true   # Swagger UI 활성화
+    path: /swagger-ui.html  # Swagger UI 경로
