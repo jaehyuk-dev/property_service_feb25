@@ -215,6 +215,9 @@ Property Service는 위의 문제점들을 다음과 같이 해결합니다:
 - 📅 **Schedule** - 일정 정보 관리
 - 💰 **Revenue** - 매출 정보 관리
 
+![Image](https://github.com/user-attachments/assets/5af92e1b-9e8e-4356-925d-01131b4a099e)
+
+[ERD] https://www.erdcloud.com/d/8KrrB4FPFewkPCZZp
 ---
 
 ## 기술 스택
@@ -324,7 +327,7 @@ Property Service는 위의 문제점들을 다음과 같이 해결합니다:
 
 ### 🔧 개발 정보
 
-- **Frontend Repository:** [`property-service-web`](https://github.com/jaehyuk-dev/property_service_web)
+- **Frontend Repository:** [`property-service-web_ver2`](https://github.com/jaehyuk-dev/property_service_web_ver2)
 - **Backend Repository:** [`property-service-feb25`](https://github.com/jaehyuk-dev/property_service_feb25)
 - **Database:** PostgreSQL 15
 - **배포 환경:** OCI/AWS/GCP (예정)
